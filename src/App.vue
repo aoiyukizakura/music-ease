@@ -1,8 +1,12 @@
 <template>
-  <router-view></router-view>
+  <main>
+    <router-view></router-view>
+  </main>
+  <Mnav></Mnav>
 </template>
 
 <script lang="ts" setup>
+  import Mnav from '/@cp/m-nav/index.vue';
 </script>
 
 <style>
