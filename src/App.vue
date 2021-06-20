@@ -5,7 +5,7 @@
 <script lang="ts" setup>
 </script>
 
-<style lang="scss">
+<style>
   body,
   html {
     margin: 0;

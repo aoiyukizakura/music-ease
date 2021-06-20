@@ -9,11 +9,15 @@ export default defineConfig({
     cors: true,
     hmr: {
       overlay: true
-    }
+    },
+    port: 3030
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, '/src')
+      '/@': resolve(__dirname, 'src'),
+      '/@style': resolve(__dirname, 'src/assets/style'),
+      '/@views': resolve(__dirname, 'src/views'),
+      '/@components': resolve(__dirname, 'src/components'),
     }
   },
   base: './'

@@ -9,9 +9,12 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
-    "baseUrl": "src",
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["./*"]
+      "/@/*": ["src/*"],
+      "/@style/*": ["src/assets/style/*"],
+      "/@views/*": ["src/views/*"],
+      "/@cp/*": ["src/components/*"],
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
