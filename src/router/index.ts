@@ -11,7 +11,25 @@ const routes: Array<RouteRecordRaw> = [
     path: '/login',
     name: 'login',
     component: () => import('/@views/login/index.vue')
-  }
+  },
+  {
+    path: '/library',
+    name: 'library',
+    component: () => import('/@views/library/index.vue'),
+    meta: {
+      requireLogin: true
+    }
+  },
+  {
+    path: '/search',
+    name: 'search',
+    component: () => import('/@views/search/index.vue')
+  },
+  {
+    path: '/playlist/:id',
+    name: 'playlist',
+    component: () => import('/@views/playlist/index.vue')
+  },
 ]
 
 const router: Router = createRouter({
@@ -21,7 +39,7 @@ const router: Router = createRouter({
 
 router.beforeEach((to, from, next) => {
   next()
-  // if (!localStorage.getItem("userInfo") && to.path !== '/login') {
+  // if (!localStorage.getItem("userInfo") && to.meta.requireLogin) {
   //   next('/login')
   // } else {
   //   next()

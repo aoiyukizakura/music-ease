@@ -1,16 +1,23 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
+import { svgBuilder } from './src/plugins/svgBuilder';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), svgBuilder('./src/assets/icons/')],
   server: {
     cors: true,
     hmr: {
       overlay: true
     },
-    port: 3030
+    port: 3030,
+    proxy: {
+      "^/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true
+      }
+    }
   },
   resolve: {
     alias: {
