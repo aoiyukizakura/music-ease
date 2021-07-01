@@ -4,6 +4,7 @@ dist
 dist-ssr
 *.local
 .vscode
+*.spec.*
 
 # dependencies
 *.local

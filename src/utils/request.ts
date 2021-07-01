@@ -1,7 +1,10 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { production_url } from './config.spec';
 
-const baseURL = 'http://localhost:4000/';
+const baseURL =
+  process.env.NODE_ENV === "development"
+    ? 'http://localhost:4000/' : production_url;
 
 const service = axios.create({
   baseURL,
@@ -17,7 +20,7 @@ service.interceptors.request.use(config => {
   return config
 })
 service.interceptors.response.use(
-  response => response,
+  response => response.data,
   error => Promise.reject(error)
 )
 

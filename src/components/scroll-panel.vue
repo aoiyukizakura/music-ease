@@ -6,11 +6,10 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { defineProps, toRefs } from '@vue/runtime-core';
-  const props =
-    defineProps<{
-      vertical?: boolean;
-    }>();
-  const { vertical } = toRefs(props);
+  import { defineProps } from '@vue/runtime-core';
+  const props = defineProps<{
+    vertical?: boolean;
+  }>();
+  const { vertical } = props;
 </script>
 <style lang="postcss"></style>

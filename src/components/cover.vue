@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="`/playlist/${playlistId}`" class="w-36 block">
+  <router-link :to="`/playlist/${id}`" class="w-36 block">
     <img
       class="h-36 w-full object-cover duration-100 origin-top-left transform focus:scale-125 focus:translate-y-4"
       :src="picUrl"
@@ -9,21 +9,12 @@
   </router-link>
 </template>
 <script setup lang="ts">
-  import { defineProps, toRefs } from '@vue/runtime-core';
-  const props =
-    defineProps<{
-      name: string;
-      picUrl: string;
-      playlistId: number;
-    }>();
-  const { name, picUrl, playlistId } = toRefs(props);
+  import { defineProps } from '@vue/runtime-core';
+  const props = defineProps<{
+    name: string;
+    picUrl: string;
+    id: number;
+  }>();
+  const { name, picUrl, id } = props;
 </script>
-<style lang="postcss">
-  .overflow-elision-2 {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
-</style>
+<style lang="postcss"></style>

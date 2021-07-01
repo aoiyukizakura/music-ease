@@ -1,9 +1,5 @@
 import request from '/@/utils/request';
 
-interface params {
-  timestamp?: number,
-  [key: string]: any
-}
 
 /**
  * 推荐歌单
@@ -13,17 +9,11 @@ interface params {
  * @param {Object} params
  * @param {number=} params.limit
  */
-export function recommendPlaylist(params: { limit: number }) {
-  return new Promise<response>((resolve, reject) => {
-    request({
-      url: '/personalized',
-      method: 'get',
-      params,
-    }).then(
-      res => resolve(res.data)
-    ).catch(
-      err => reject(err)
-    );
+export function recommendPlaylist(params: params): any {
+  return request({
+    url: '/personalized',
+    method: 'get',
+    params,
   })
 }
 /**
@@ -32,7 +22,7 @@ export function recommendPlaylist(params: { limit: number }) {
  * @param {Object} params
  * @param {number=} params.limit
  */
-export function dailyRecommendPlaylist(params: { limit: number }) {
+export function dailyRecommendPlaylist(params: params) {
   return request({
     url: '/recommend/resource',
     method: 'get',
@@ -48,7 +38,7 @@ export function dailyRecommendPlaylist(params: { limit: number }) {
  * - s : 歌单最近的 s 个收藏者, 默认为8
  * @param {number} id
  */
-export function getPlaylistDetail(id: number) {
+export function getPlaylistDetail(id: number):any {
   let params = { id };
   return request({
     url: '/playlist/detail',
@@ -67,14 +57,13 @@ export function getPlaylistDetail(id: number) {
  * @param {number=} params.limit
  * @param {number} params.before
  */
-export function highQualityPlaylist(params: params) {
+export function highQualityPlaylist(params: IHighQualityPlaylistParam) {
   return request({
     url: '/top/playlist/highquality',
     method: 'get',
     params,
   });
 }
-
 /**
  * 歌单 ( 网友精选碟 )
  * 说明 : 调用此接口 , 可获取网友精选碟歌单
@@ -86,7 +75,7 @@ export function highQualityPlaylist(params: params) {
  * @param {string} params.cat
  * @param {number=} params.limit
  */
-export function topPlaylist(params: params) {
+export function topPlaylist(params?: ItopPlaylistParam): any {
   return request({
     url: '/top/playlist',
     method: 'get',
@@ -109,7 +98,7 @@ export function playlistCatlist() {
  * 所有榜单
  * 说明 : 调用此接口,可获取所有榜单 接口地址 : /toplist
  */
-export function toplists() {
+export function toplists(): any {
   return request({
     url: '/toplist',
     method: 'get',
