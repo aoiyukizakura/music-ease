@@ -22,7 +22,7 @@
   import { recommendPlaylist, topPlaylist } from '/@/api/playlist';
   import Cover from '/@cp/cover.vue';
   import ScrollPanel from '/@cp/scroll-panel.vue';
-  const recommendResult: Array<IRecommendPlaylist> = (await recommendPlaylist({ limit: 10 })).result;
-  const topPlayResult: Array<any> = (await topPlaylist({ limit: 10 })).playlists;
+  const recommendResult: IRecommendPlaylist[] = (await recommendPlaylist({ limit: 10 })).result;
+  const topPlayResult: any[] = (await topPlaylist({ limit: 10 })).playlists;
 </script>
 <style lang="postcss"></style>

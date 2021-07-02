@@ -40,6 +40,7 @@
             v-for="(item, index) in tracks"
             :artist="item.ar"
             :track="item.al"
+            :name="item.name"
             @on-play="onPlay(item.al.id, index)"
           />
         </ul>
@@ -48,43 +49,73 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { ref } from '@vue/reactivity';
+  import { reactive, ref } from '@vue/reactivity';
   import type { Ref } from '@vue/reactivity';
   import PlaylistItem from '/@cp/playlist-item.vue';
   import { computed, onBeforeUnmount, onMounted } from '@vue/runtime-core';
   import { getPlaylistDetail } from '/@/api/playlist';
   import { useRoute } from 'vue-router';
   import { useStore } from '/@/store';
+  import { getTrackDetail } from '/@/api/track';
+
   onMounted(() => {
     document.getElementById('scroll-box')?.addEventListener('scroll', onScroll);
   });
   onBeforeUnmount(() => {
     document.getElementById('scroll-box')?.removeEventListener('scroll', onScroll);
   });
-  const store = useStore();
 
-  const fixed = ref(false);
-  const scrollEl: Ref<HTMLElement | null> = ref(null);
-  const rate = ref(1);
-  const playlistId = Number(useRoute().params.id);
-  const playlistData = (await getPlaylistDetail(playlistId)).playlist;
-  const { tracks = [] } = playlistData;
+  const store = useStore();
   const player = computed(() => store.state.player);
 
+  const PAGE_SIZE = 10;
+
+  const fixed = ref(false);
+  const rate = ref(1);
+  const next_page = ref(2);
+  const loading = ref(false);
+  const tracks: any[] = reactive([]);
+  const scrollEl: Ref<HTMLElement | null> = ref(null);
+
+  const playlistId = Number(useRoute().params.id);
+  const playlistData = (await getPlaylistDetail(playlistId)).playlist;
+  const playlistIds = Array.prototype.concat([], playlistData.trackIds);
+  tracks.push(...playlistData.tracks);
+
+  async function getData(): Promise<void> {
+    loading.value = true;
+    const req_ids: string = playlistIds
+      .slice(PAGE_SIZE * (next_page.value - 1), PAGE_SIZE * next_page.value)
+      .map((t: any) => t.id)
+      .join(',');
+    const { songs } = await getTrackDetail(req_ids);
+    if (songs) {
+      tracks.push(...songs);
+      next_page.value++; // 加载成功之后，再准备加载下一页
+    }
+    loading.value = false;
+  }
+
   function playAll(): void {
-    player.value.list = tracks;
+    player.value.list = playlistIds;
+    player.value.current = 0;
     player.value._playTrack();
   }
-  function onPlay(id: any, index: any) {
-    if (player.value.list !== tracks) {
-      player.value.list = tracks;
-    }
+  function onPlay(id: any, index: any): void {
+    player.value.list = playlistIds;
     player.value._playTrack(id, index);
   }
-  function onScroll() {
+  function onScroll(): void {
     const offsetTop = Number(scrollEl.value?.getBoundingClientRect()?.top);
     rate.value = offsetTop / 356;
     fixed.value = offsetTop <= 64;
+
+    // BUG:触底加载，有bug
+    // const divHeight = scrollEl.value?.getBoundingClientRect().height || 0;
+    // const divBottom = scrollEl.value?.getBoundingClientRect().bottom || 0;
+    // if (divBottom - divHeight < 0 && !loading.value && (next_page.value - 1) * PAGE_SIZE <= playlistIds.length) {
+    //   getData();
+    // }
   }
 </script>
 <style lang="postcss">

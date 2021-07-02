@@ -6,9 +6,9 @@
       v-model="value"
       min="0"
       max="1"
-      :step="0.0000001"
-      @touchstart="$emit('drag-start')"
-      @touchend="$emit('drag-end', $event)"
+      :step="0.00001"
+      @input="$emit('drag-start')"
+      @change="$emit('drag-end', $event)"
     />
     <svg id="line-progress" class="w-full h-0.5 absolute z-0">
       <line x1="0" y1="50%" :x2="`${value * 100}%`" y2="50%" stroke="#2dbd2d" stroke-width="2" />
@@ -18,7 +18,7 @@
 <script setup lang="ts">
   import { defineEmit, defineProps } from '@vue/runtime-core';
   defineProps<{ value: number }>();
-  defineEmit(['drag-start', 'drag-end', 'on-change']);
+  defineEmit(['drag-start', 'drag-end']);
 </script>
 <style lang="postcss">
   #progress-bar-line input[type='range'] {

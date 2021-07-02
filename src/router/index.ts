@@ -1,7 +1,7 @@
 import type { Router, RouteRecordRaw } from "vue-router";
 import { createRouter, createWebHashHistory, } from "vue-router";
 
-const routes: Array<RouteRecordRaw> = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'Home',

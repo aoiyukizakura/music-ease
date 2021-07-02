@@ -1,10 +1,10 @@
 <template>
   <li class="flex flex-row px-2 space-x-3 items-center overflow-hidden" @click="$emit('on-play')">
-    <img :src="props.track.picUrl" class="w-14 h-14 flex-none object-cover" alt="歌曲封面" />
+    <img :src="track.picUrl" class="w-14 h-14 flex-none object-cover" alt="歌曲封面" />
     <div class="flex-1 overflow-hidden">
-      <p class="text-base font-medium truncate w-full">{{ props.track.name }}</p>
+      <p class="text-base font-medium truncate w-full">{{ name }}</p>
       <span class="text-gray-400 text-sm truncate block">
-        <template v-for="(ar, index) in props.artist" :key="index">
+        <template v-for="(ar, index) in artist" :key="index">
           <template v-if="index >= 1">&nbsp;& </template>
           {{ ar.name }}
         </template>
@@ -16,21 +16,22 @@
 <script setup lang="ts">
   import { defineEmit, defineProps } from '@vue/runtime-core';
   interface ar {
-    alias: Array<any>;
+    alias: any[];
     id: number;
     name: string;
-    tns: Array<any>;
+    tns: any[];
   }
   interface al {
     id: number;
     name: string;
     pic: number;
     picUrl: string;
-    tns: Array<any>;
+    tns: any[];
   }
-  const props = defineProps<{
+  defineProps<{
     track: al;
-    artist: Array<ar>;
+    artist: ar[];
+    name: string;
   }>();
   defineEmit(['on-play']);
 </script>

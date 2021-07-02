@@ -2,7 +2,7 @@ import { Howl, Howler } from 'howler'
 import { getTrackDetail } from '../api/track';
 interface track {
   id: number;
-  ar?: Array<any>;
+  ar?: any[];
   al?: any;
   [k: string]: any
 }
@@ -18,7 +18,7 @@ export default class Player {
   private _volume: number; // 0 to 1
   private _volumeBeforeMuted: number; // 用于保存静音前的音量
 
-  private _list: Array<track>;// 播放列表
+  private _list: track[];// 播放列表
   private _current: number; // 当前播放歌曲在播放列表里的index
   private _currentTrack: track | null; // 当前播放歌曲的详细信息
 
@@ -26,7 +26,7 @@ export default class Player {
   private AF: number;
 
 
-  private constructor(list?: Array<track>, index?: number) {
+  private constructor(list?: track[], index?: number) {
     this._playing = false;
     this._progress = 0;
     this._volume = 1;
@@ -55,7 +55,7 @@ export default class Player {
     this.currentTrack = (await getTrackDetail(String(this.list[this.current].id))).songs[0];
     document.title = `Musicease - ${this.currentTrack.al.name}`
     this.howl = new Howl({
-      src: [this.MUSIC_URL()],
+      src: this.MUSIC_URL(),
       html5: true,
       onplay: () => {
         this.playing = true
@@ -83,21 +83,21 @@ export default class Player {
     })
     this.howl.play()
   }
-  _step(): void {
+  _asyncProcess(): void {
     if (!this.playing) return;
     if (this.howl === null) return;
-    const seek = this.howl.seek()
+    const seek = this.howl.seek();
     if (typeof seek === "number") {
       this.progress = seek / (this.currentTrack.dt / 1000);
     }
+  }
+  _step(): void {
+    this._asyncProcess();
     this.AF = requestAnimationFrame(this._step.bind(this));
   }
   _seek(v: number): void {
-    this.howl?.seek(v * (this.currentTrack.dt / 1000))
-    const seek = this.howl?.seek()
-    if (typeof seek === "number") {
-      this.progress = seek / (this.currentTrack.dt / 1000);
-    }
+    this.howl?.seek(v * (this.currentTrack.dt / 1000));
+    this._asyncProcess();
   }
   _cancelStep(): void {
     cancelAnimationFrame(this.AF)
@@ -146,10 +146,10 @@ export default class Player {
   public set volumeBeforeMuted(v: number) {
     this._volumeBeforeMuted = v;
   }
-  public get list(): Array<any> {
+  public get list(): any[] {
     return this._list;
   }
-  public set list(v: Array<any>) {
+  public set list(v: any[]) {
     this._list = v;
   }
   public get current(): number {
@@ -169,5 +169,8 @@ export default class Player {
   }
   public set howl(v: Howl | null) {
     this._howl = v;
+  }
+  public get max_lenth(): number {
+    return this.list.length
   }
 }
