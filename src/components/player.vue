@@ -6,12 +6,21 @@
       @drag-start="player._pause()"
       @drag-end="change($event)"
     ></process-bar>
-    <img :src="player.currentTrack?.al?.picUrl" alt="封面" class="h-16 w-16 object-cover" />
+    <img v-if="player.currentTrack" :src="player.currentTrack?.al?.picUrl" alt="封面" class="h-16 w-16 object-cover" />
+    <img
+      v-else
+      src="https://p2.music.126.net/UeTuwE7pvjBpypWLudqukA==/3132508627578625.jpg"
+      alt="封面"
+      class="h-16 w-16 object-cover"
+    />
     <div class="flex flex-col flex-1 overflow-hidden mx-2">
-      <span class="block truncate text-lg font-medium text-white">{{ player.currentTrack?.al?.name }}</span>
-      <span class="block truncate text-sm text-gray-300">
-        <template v-for="(ar, index) in player.currentTrack?.ar" :key="index"> {{ ar.name }}&nbsp; </template>
-      </span>
+      <template v-if="player.currentTrack">
+        <span class="block truncate text-lg font-medium text-white">{{ player.currentTrack.al?.name }}</span>
+        <span class="block truncate text-sm text-gray-300">
+          <template v-for="(ar, index) in player.currentTrack.ar" :key="index"> {{ ar.name }}&nbsp; </template>
+        </span>
+      </template>
+      <span v-else class="text-gray-500 font-medium text-sm">播放列表为空...</span>
     </div>
     <div class="controls flex">
       <svg-icon name="like" class="mr-2"></svg-icon>

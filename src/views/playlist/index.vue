@@ -58,11 +58,13 @@
   import { useStore } from '/@/store';
   import { getTrackDetail } from '/@/api/track';
 
+  const scrollBox = document.getElementById('scroll-box');
+
   onMounted(() => {
-    document.getElementById('scroll-box')?.addEventListener('scroll', onScroll);
+    if (scrollBox !== null) scrollBox.addEventListener('scroll', onScroll);
   });
   onBeforeUnmount(() => {
-    document.getElementById('scroll-box')?.removeEventListener('scroll', onScroll);
+    if (scrollBox !== null) scrollBox.removeEventListener('scroll', onScroll);
   });
 
   const store = useStore();
@@ -106,16 +108,16 @@
     player.value._playTrack(id, index);
   }
   function onScroll(): void {
-    const offsetTop = Number(scrollEl.value?.getBoundingClientRect()?.top);
-    rate.value = offsetTop / 356;
-    fixed.value = offsetTop <= 64;
+    if (scrollBox === null) return;
+    const offsetTop = 360 - Number(scrollBox?.scrollTop);
+    rate.value = offsetTop / 360;
+    fixed.value = offsetTop <= 66; //提前4px执行fixed，看起来更丝滑
 
-    // BUG:触底加载，有bug
-    // const divHeight = scrollEl.value?.getBoundingClientRect().height || 0;
-    // const divBottom = scrollEl.value?.getBoundingClientRect().bottom || 0;
-    // if (divBottom - divHeight < 0 && !loading.value && (next_page.value - 1) * PAGE_SIZE <= playlistIds.length) {
-    //   getData();
-    // }
+    // 触底加载
+    const offsetBottom = scrollBox.scrollHeight - scrollBox.scrollTop - scrollBox.clientHeight;
+    if (offsetBottom < 60 && !loading.value && (next_page.value - 1) * PAGE_SIZE <= playlistIds.length) {
+      getData();
+    }
   }
 </script>
 <style lang="postcss">

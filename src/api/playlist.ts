@@ -186,5 +186,5 @@ export function dailyRecommendTracks() {
   return request({
     url: '/recommend/songs',
     method: 'get'
-  }).then(result => result);
+  });
 }
