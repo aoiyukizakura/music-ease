@@ -2,7 +2,7 @@
   <div class="player box-border dark:bg-gray-800 text-white flex h-16 items-center relative">
     <process-bar
       class="slider absolute left-0 z-20 w-full"
-      :disabled="!!player.currentTrack"
+      :disabled="!player.currentTrack"
       :value="player.progress"
       @drag-start="player._pause()"
       @drag-end="change($event)"
