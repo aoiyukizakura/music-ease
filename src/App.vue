@@ -1,14 +1,20 @@
 <template>
   <main class="flex flex-col pb-32 relative h-full dark:bg-gray-900 dark:text-white">
-    <div class="mt-4 mx-2 h-full overflow-y-auto relative" id="scroll-box" ref="scroll-box">
-      <suspense>
-        <template #default>
-          <router-view></router-view>
+    <div class="mt-4 mx-2 h-full overflow-hidden relative">
+      <router-view v-slot="{ Component, route }">
+        <template v-if="Component">
+          <keep-alive>
+            <suspense :timeout="0">
+              <template #default>
+                <component :is="Component" :key="route.name" />
+              </template>
+              <template #fallback>
+                <div>{{ route.name }} Loading...</div>
+              </template>
+            </suspense>
+          </keep-alive>
         </template>
-        <template #fallback>
-          <div>Loading...</div>
-        </template>
-      </suspense>
+      </router-view>
     </div>
     <div class="w-full absolute bottom-0 left-0">
       <player></player>

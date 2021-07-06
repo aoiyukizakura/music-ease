@@ -1,50 +1,52 @@
 <template>
-  <div class="playlist_wrapper absolute top-0 left-0 w-full bg-gradient-to-b">
+  <div class="playlist_wrapper w-full bg-gradient-to-b h-full">
     <header
-      class="head-menu flex text-base h-16 fixed left-0 right-0 top-0 z-20 pt-4 px-2"
+      class="head-menu flex text-base h-12 absolute left-0 right-0 top-0 z-20"
       :class="fixed ? 'bg-gray-900' : ''"
     >
       <svg-icon name="back" @click="$router.go(-1)"></svg-icon>
       <h2 class="flex-1 text-center mx-5 truncate" :style="`opacity: ${1 - rate}`">{{ playlistData.name }}</h2>
       <svg-icon name="like"></svg-icon>
     </header>
-    <div class="playlist-info">
-      <div
-        class="mask transform absolute z-10 top-0 left-0 right-0 bottom-0 opacity-0 bg-gray-900"
-        :style="rate > 0 ? `opacity: ${(1 - rate) * 1.4}` : `opacity: 1`"
-      ></div>
-      <figure
-        :style="rate > 0 ? `transform: scale(${0.4 * rate + 0.6}` : 'transform: scale(0)'"
-        class="flex flex-col items-center overflow-hidden w-full"
-      >
-        <img :src="playlistData.coverImgUrl" alt="封面" class="h-48 w-48 object-cover align-bottom" />
-        <figcaption class="text-center w-full">
-          <h1 class="text-2xl mt-2 truncate">{{ playlistData.name }}</h1>
-          <p class="text-sm font-light mt-1 overflow-elision-2">{{ playlistData.description }}</p>
-        </figcaption>
-      </figure>
-    </div>
-    <div class="h-full w-full relative z-10" id="playlist">
-      <div
-        class="btn-divider text-center h-6 z-30 left-0 right-0"
-        :class="fixed ? 'fixed top-16 w-full bg-gray-900' : 'relative '"
-      >
-        <button class="btn absolute m-auto left-0 right-0 -bottom-6 z-20 shadow-sm" type="button" @click="playAll">
-          播放
-        </button>
+    <div class="scroll-wrapper h-full overflow-y-auto" ref="scrollBox">
+      <div class="playlist-info">
+        <div
+          class="mask transform absolute z-10 top-0 left-0 right-0 bottom-0 opacity-0 bg-gray-900"
+          :style="rate > 0 ? `opacity: ${(1 - rate) * 1.4}` : `opacity: 1`"
+        ></div>
+        <figure
+          :style="rate > 0 ? `transform: scale(${0.4 * rate + 0.6}` : 'transform: scale(0)'"
+          class="flex flex-col items-center overflow-hidden w-full"
+        >
+          <img :src="playlistData.coverImgUrl" alt="封面" class="h-48 w-48 object-cover align-bottom" />
+          <figcaption class="text-center w-full">
+            <h1 class="text-2xl mt-2 truncate">{{ playlistData.name }}</h1>
+            <p class="text-sm font-light mt-1 overflow-elision-2">{{ playlistData.description }}</p>
+          </figcaption>
+        </figure>
       </div>
-      <div v-show="fixed" class="h-6"></div>
-      <div class="pt-10 relative bg-gray-900">
-        <ul class="space-y-2 pb-2" v-if="playlistData.id">
-          <playlist-item
-            v-for="(item, index) in tracks"
-            :artist="item.ar"
-            :pic-url="item.al.picUrl"
-            :name="item.name"
-            :is-playing="isPlayingThisList && item.id === player?.currentTrack?.id"
-            @on-play="onPlay(index)"
-          />
-        </ul>
+      <div class="w-full relative z-10" id="playlist">
+        <div
+          class="btn-divider text-center h-6 z-30 left-0 right-0"
+          :class="fixed ? 'fixed top-16 w-full bg-gray-900' : 'relative '"
+        >
+          <button class="btn absolute m-auto left-0 right-0 -bottom-6 z-20 shadow-sm" type="button" @click="playAll">
+            播放
+          </button>
+        </div>
+        <div v-show="fixed" class="h-6"></div>
+        <div class="pt-10 relative bg-gray-900">
+          <ul class="space-y-2 pb-2" v-if="playlistData.id">
+            <playlist-item
+              v-for="(item, index) in tracks"
+              :artist="item.ar"
+              :pic-url="item.al.picUrl"
+              :name="item.name"
+              :is-playing="isPlayingThisList && item.id === player?.currentTrack?.id"
+              @on-play="onPlay(index)"
+            />
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -53,19 +55,21 @@
   import { reactive, ref } from '@vue/reactivity';
   import type { Ref } from '@vue/reactivity';
   import PlaylistItem from '/@cp/playlist-item.vue';
-  import { computed, onBeforeUnmount, onMounted } from '@vue/runtime-core';
+  import { computed, onBeforeUnmount, onDeactivated, onMounted } from '@vue/runtime-core';
   import { getPlaylistDetail } from '/@/api/playlist';
   import { useRoute } from 'vue-router';
   import { useStore } from '/@/store';
   import { getTrackDetail } from '/@/api/track';
 
-  const scrollBox = document.getElementById('scroll-box');
-
   onMounted(() => {
-    if (scrollBox !== null) scrollBox.addEventListener('scroll', onScroll);
+    if (scrollBox.value !== null) scrollBox.value.addEventListener('scroll', onScroll);
   });
   onBeforeUnmount(() => {
-    if (scrollBox !== null) scrollBox.removeEventListener('scroll', onScroll);
+    if (scrollBox.value !== null) scrollBox.value.removeEventListener('scroll', onScroll);
+  });
+  onDeactivated(() => {
+    rate.value = 1;
+    fixed.value = false;
   });
 
   const store = useStore();
@@ -78,6 +82,7 @@
   const rate = ref(1);
   const next_page = ref(2);
   const loading = ref(false);
+  const scrollBox = ref<HTMLElement | null>(null);
   const tracks: any[] = reactive([]);
 
   const playlistId = Number(useRoute().params.id);
@@ -106,12 +111,7 @@
   }
   function onPlay(index: any): void {
     loadThisPlaylist();
-    player.value
-      ._playTrack(index)
-      .then(res => {})
-      .catch(err => {
-        console.log(err);
-      });
+    player.value._playTrack(index);
   }
   // 把该歌单的内容加载到播放器中
   function loadThisPlaylist() {
@@ -124,13 +124,13 @@
     }
   }
   function onScroll(): void {
-    if (scrollBox === null) return;
-    const offsetTop = 360 - Number(scrollBox?.scrollTop);
+    if (scrollBox.value === null) return;
+    const offsetTop = 360 - Number(scrollBox.value.scrollTop);
     rate.value = offsetTop / 360;
-    fixed.value = offsetTop <= 66; //提前4px执行fixed，看起来更丝滑
+    fixed.value = offsetTop <= 68; //提前4px执行fixed，看起来更丝滑
 
     // 触底加载
-    const offsetBottom = scrollBox.scrollHeight - scrollBox.scrollTop - scrollBox.clientHeight;
+    const offsetBottom = scrollBox.value.scrollHeight - scrollBox.value.scrollTop - scrollBox.value.clientHeight;
     if (offsetBottom < 60 && !loading.value && (next_page.value - 1) * PAGE_SIZE <= playlistIds.length) {
       getData();
     }
@@ -143,7 +143,7 @@
   .playlist-info {
     @apply flex flex-col items-center pt-16 fixed top-0 left-0 right-0 z-0 px-2 transform origin-bottom bg-gradient-to-b from-red-500 via-gray-800 to-gray-900;
   }
-  .playlist_wrapper {
+  .scroll-wrapper {
     padding-top: 21rem;
   }
 </style>

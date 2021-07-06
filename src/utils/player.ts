@@ -9,10 +9,6 @@ interface track {
 export default class Player {
   private static instance: Player;
 
-  private MUSIC_URL = (): string =>
-    this.list.length ?
-      `https://music.163.com/song/media/outer/url?id=${this.list[this.current].id}.mp3` : '';
-
   private _playing: boolean; // 是否正在播放中
   private _progress: number; // 当前播放歌曲的进度
   private _volume: number; // 0 to 1
@@ -49,14 +45,19 @@ export default class Player {
     }
     return Player.instance;
   }
-  async _playTrack(index?: number): Promise<void> {
-    if (!this.MUSIC_URL()) return;
+  async _playTrack(index: number = 0, track?: track): Promise<void> {
+    this.current = index;
+    if (track) {
+      this.list = [track];
+      this.currentTrack = track;
+    } else {
+      const currentTrackId = this.list?.[index]?.id
+      this.currentTrack = (await getTrackDetail(String(currentTrackId))).songs[0];
+    }
     Howler.unload();
-    this.current = index || this.current;
-    this.currentTrack = (await getTrackDetail(String(this.list[this.current].id))).songs[0];
     document.title = `Musicease - ${this.currentTrack.name}`
     this.howl = new Howl({
-      src: this.MUSIC_URL(),
+      src: this.music_url,
       html5: true,
       onplay: () => {
         this.playing = true
@@ -84,6 +85,39 @@ export default class Player {
     })
     this.howl.play()
   }
+  _playNext(): void {
+    if (this.current >= this.list.length - 1) {
+      this.current = 0;
+    } else {
+      this.current++
+    }
+    this._playTrack(this.current)
+  }
+  _playPrev(): void {
+    if (this.current <= 0) {
+      this.current = this.total - 1;
+    } else {
+      this.current--
+    }
+    this._playTrack(this.current)
+  }
+  _pause(): void {
+    if (this.howl === null) return;
+    this.howl.pause();
+  }
+  _play(): void {
+    if (this.howl === null) return;
+    this.howl.play();
+  }
+  _stop(): void {
+    if (this.howl === null) return;
+    this.howl.stop()
+  }
+  _seek(v: number): void {
+    this.howl?.seek(v * (this.currentTrack.dt / 1000));
+    this.progress = v
+  }
+
   _step(): void {
     if (!this.playing) return;
     if (this.howl === null) return;
@@ -96,37 +130,6 @@ export default class Player {
   _cancelStep(): void {
     cancelAnimationFrame(this.AF)
   }
-  _seek(v: number): void {
-    this.howl?.seek(v * (this.currentTrack.dt / 1000));
-    this.progress = v
-  }
-  _playNext(): void {
-    if (this.current >= this.list.length - 1) {
-      this.current = 0;
-    } else {
-      this.current++
-    }
-    this._playTrack()
-  }
-  _playPrev(): void {
-    if (this.current <= 0) {
-      this.current = this.total - 1;
-    } else {
-      this.current--
-    }
-    this._playTrack()
-  }
-  _pause(): void {
-    if (this.howl !== null) {
-      this.howl.pause();
-    }
-  }
-  _play(): void {
-    if (this.howl !== null) {
-      this.howl.play();
-    }
-  }
-
   public get playing(): boolean {
     return this._playing;
   }
@@ -184,5 +187,8 @@ export default class Player {
   }
   public get total(): number {
     return this.list.length
+  }
+  public get music_url(): string {
+    return `https://music.163.com/song/media/outer/url?id=${this.currentTrack.id}.mp3`;
   }
 }
