@@ -27,5 +27,8 @@ export default defineConfig({
       '/@cp': resolve(__dirname, 'src/components'),
     }
   },
-  base: './'
+  base: './',
+  css: {
+    postcss: "./postcss.config.js"
+  }
 })

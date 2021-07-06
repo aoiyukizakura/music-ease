@@ -19,6 +19,7 @@ export default class Player {
   private _volumeBeforeMuted: number; // 用于保存静音前的音量
 
   private _list: track[];// 播放列表
+  private _listId: number | null;
   private _current: number; // 当前播放歌曲在播放列表里的index
   private _currentTrack: track | null; // 当前播放歌曲的详细信息
 
@@ -32,6 +33,7 @@ export default class Player {
     this._volume = 1;
     this._volumeBeforeMuted = 1;
     this._list = list || [];
+    this._listId = null;
     this._current = index || 0;
     this._currentTrack = null;
     this._howl = null;
@@ -43,17 +45,16 @@ export default class Player {
 
   public static getPlayer() {
     if (!Player.instance) {
-      const player = new Player();
-      Player.instance = player;
+      Player.instance = new Player()
     }
     return Player.instance;
   }
-  async _playTrack(id?: number, index?: number): Promise<void> {
+  async _playTrack(index?: number): Promise<void> {
     if (!this.MUSIC_URL()) return;
     Howler.unload();
     this.current = index || this.current;
     this.currentTrack = (await getTrackDetail(String(this.list[this.current].id))).songs[0];
-    document.title = `Musicease - ${this.currentTrack.al.name}`
+    document.title = `Musicease - ${this.currentTrack.name}`
     this.howl = new Howl({
       src: this.MUSIC_URL(),
       html5: true,
@@ -83,30 +84,35 @@ export default class Player {
     })
     this.howl.play()
   }
-  _asyncProcess(): void {
+  _step(): void {
     if (!this.playing) return;
     if (this.howl === null) return;
     const seek = this.howl.seek();
     if (typeof seek === "number") {
       this.progress = seek / (this.currentTrack.dt / 1000);
     }
-  }
-  _step(): void {
-    this._asyncProcess();
     this.AF = requestAnimationFrame(this._step.bind(this));
-  }
-  _seek(v: number): void {
-    this.howl?.seek(v * (this.currentTrack.dt / 1000));
-    this._asyncProcess();
   }
   _cancelStep(): void {
     cancelAnimationFrame(this.AF)
+  }
+  _seek(v: number): void {
+    this.howl?.seek(v * (this.currentTrack.dt / 1000));
+    this.progress = v
   }
   _playNext(): void {
     if (this.current >= this.list.length - 1) {
       this.current = 0;
     } else {
       this.current++
+    }
+    this._playTrack()
+  }
+  _playPrev(): void {
+    if (this.current <= 0) {
+      this.current = this.total - 1;
+    } else {
+      this.current--
     }
     this._playTrack()
   }
@@ -152,6 +158,12 @@ export default class Player {
   public set list(v: any[]) {
     this._list = v;
   }
+  public get listId(): number | null {
+    return this._listId;
+  }
+  public set listId(v: number | null) {
+    this._listId = v;
+  }
   public get current(): number {
     return this._current;
   }
@@ -170,7 +182,7 @@ export default class Player {
   public set howl(v: Howl | null) {
     this._howl = v;
   }
-  public get max_lenth(): number {
+  public get total(): number {
     return this.list.length
   }
 }

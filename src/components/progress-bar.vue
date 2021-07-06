@@ -1,6 +1,7 @@
 <template>
   <div id="progress-bar-line" class="bg-gray-700 h-0.5 flex">
     <input
+      :disabled="disabled"
       class="w-full absolute z-10"
       type="range"
       v-model="value"
@@ -16,9 +17,9 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { defineEmit, defineProps } from '@vue/runtime-core';
-  defineProps<{ value: number }>();
-  defineEmit(['drag-start', 'drag-end']);
+  import { defineEmits, defineProps } from '@vue/runtime-core';
+  defineProps<{ value: number; disabled?: boolean }>();
+  defineEmits(['drag-start', 'drag-end']);
 </script>
 <style lang="postcss">
   #progress-bar-line input[type='range'] {
@@ -26,13 +27,22 @@
     height: 2px; /*横条的高度*/
     cursor: pointer;
     background-color: transparent;
-  }
-  /*拖动块的样式*/
-  #progress-bar-line input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none; /*清除系统默认样式*/
-    height: 6px; /*拖动块高度*/
-    width: 6px; /*拖动块宽度*/
-    border-radius: 50%;
-    background-color: beige;
+    /*拖动块的样式*/
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none; /*清除系统默认样式*/
+      -moz-appearance: none; /*清除系统默认样式*/
+      height: 6px; /*拖动块高度*/
+      width: 6px; /*拖动块宽度*/
+      border-radius: 50%;
+      background-color: beige;
+    }
+    /*拖动块的样式*/
+    &::-moz-range-thumb {
+      -moz-appearance: none; /*清除系统默认样式*/
+      height: 6px; /*拖动块高度*/
+      width: 6px; /*拖动块宽度*/
+      border-radius: 50%;
+      background-color: beige;
+    }
   }
 </style>

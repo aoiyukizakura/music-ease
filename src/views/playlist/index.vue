@@ -24,7 +24,7 @@
         </figcaption>
       </figure>
     </div>
-    <div class="h-full w-full relative z-10" id="playlist" ref="scrollEl">
+    <div class="h-full w-full relative z-10" id="playlist">
       <div
         class="btn-divider text-center h-6 z-30 left-0 right-0"
         :class="fixed ? 'fixed top-16 w-full bg-gray-900' : 'relative '"
@@ -35,13 +35,14 @@
       </div>
       <div v-show="fixed" class="h-6"></div>
       <div class="pt-10 relative bg-gray-900">
-        <ul class="space-y-2 pb-2">
+        <ul class="space-y-2 pb-2" v-if="playlistData.id">
           <playlist-item
             v-for="(item, index) in tracks"
             :artist="item.ar"
-            :track="item.al"
+            :pic-url="item.al.picUrl"
             :name="item.name"
-            @on-play="onPlay(item.al.id, index)"
+            :is-playing="isPlayingThisList && item.id === player?.currentTrack?.id"
+            @on-play="onPlay(index)"
           />
         </ul>
       </div>
@@ -69,6 +70,7 @@
 
   const store = useStore();
   const player = computed(() => store.state.player);
+  const isPlayingThisList = computed(() => playlistData.id === player.value.listId);
 
   const PAGE_SIZE = 10;
 
@@ -77,10 +79,9 @@
   const next_page = ref(2);
   const loading = ref(false);
   const tracks: any[] = reactive([]);
-  const scrollEl: Ref<HTMLElement | null> = ref(null);
 
   const playlistId = Number(useRoute().params.id);
-  const playlistData = (await getPlaylistDetail(playlistId)).playlist;
+  const { playlist: playlistData } = await getPlaylistDetail(playlistId);
   const playlistIds = Array.prototype.concat([], playlistData.trackIds);
   tracks.push(...playlistData.tracks);
 
@@ -99,13 +100,28 @@
   }
 
   function playAll(): void {
-    player.value.list = playlistIds;
+    loadThisPlaylist();
     player.value.current = 0;
     player.value._playTrack();
   }
-  function onPlay(id: any, index: any): void {
-    player.value.list = playlistIds;
-    player.value._playTrack(id, index);
+  function onPlay(index: any): void {
+    loadThisPlaylist();
+    player.value
+      ._playTrack(index)
+      .then(res => {})
+      .catch(err => {
+        console.log(err);
+      });
+  }
+  // 把该歌单的内容加载到播放器中
+  function loadThisPlaylist() {
+    const listId = player.value.listId;
+    if (listId === playlistData.id) {
+      return;
+    } else {
+      player.value.list = playlistIds;
+      player.value.listId = playlistData.id;
+    }
   }
   function onScroll(): void {
     if (scrollBox === null) return;
