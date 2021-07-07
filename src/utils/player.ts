@@ -1,4 +1,5 @@
 import { Howl, Howler } from 'howler'
+import { urlToHttpOptions } from 'http';
 import { getTrackDetail } from '../api/track';
 interface track {
   id: number;
@@ -21,6 +22,7 @@ export default class Player {
 
   private _howl: Howl | null;
   private AF: number;
+  private _visible: boolean;
 
 
   private constructor(list?: track[], index?: number) {
@@ -34,6 +36,7 @@ export default class Player {
     this._currentTrack = null;
     this._howl = null;
     this.AF = 0;
+    this._visible = true;
 
     Howler.volume(this.volume);
     Howler.usingWebAudio = true;
@@ -190,5 +193,11 @@ export default class Player {
   }
   public get music_url(): string {
     return `https://music.163.com/song/media/outer/url?id=${this.currentTrack.id}.mp3`;
+  }
+  public set visible(v: boolean) {
+    this._visible = v;
+  }
+  public get visible(): boolean {
+    return this._visible
   }
 }

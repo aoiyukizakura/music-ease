@@ -1,7 +1,7 @@
 <template>
-  <div class="playlist_wrapper w-full bg-gradient-to-b h-full">
+  <div class="playlist-wrapper w-full h-full pt-4 px-2">
     <header
-      class="head-menu flex text-base h-12 absolute left-0 right-0 top-0 z-20"
+      class="head-menu flex text-base h-14 absolute left-0 right-0 top-0 z-20 pt-4 px-2"
       :class="fixed ? 'bg-gray-900' : ''"
     >
       <svg-icon name="back" @click="$router.go(-1)"></svg-icon>
@@ -16,7 +16,7 @@
         ></div>
         <figure
           :style="rate > 0 ? `transform: scale(${0.4 * rate + 0.6}` : 'transform: scale(0)'"
-          class="flex flex-col items-center overflow-hidden w-full"
+          class="flex flex-col items-center overflow-hidden w-full transform"
         >
           <img :src="playlistData.coverImgUrl" alt="封面" class="h-48 w-48 object-cover align-bottom" />
           <figcaption class="text-center w-full">
@@ -28,7 +28,7 @@
       <div class="w-full relative z-10" id="playlist">
         <div
           class="btn-divider text-center h-6 z-30 left-0 right-0"
-          :class="fixed ? 'fixed top-16 w-full bg-gray-900' : 'relative '"
+          :class="fixed ? 'fixed top-14 w-full bg-gray-900' : 'relative '"
         >
           <button class="btn absolute m-auto left-0 right-0 -bottom-6 z-20 shadow-sm" type="button" @click="playAll">
             播放
@@ -46,6 +46,9 @@
               @on-play="onPlay(index)"
             />
           </ul>
+        </div>
+        <div class="my-5 w-full text-center font-normal text-sm text-gray-400" v-show="loading">
+          <span>loading...</span>
         </div>
       </div>
     </div>
@@ -95,12 +98,17 @@
       .slice(offset.value, offset.value + PAGE_SIZE)
       .map((t: any) => t.id)
       .join(',');
-    const { songs } = await getTrackDetail(req_ids);
-    if (songs) {
-      tracks.push(...songs);
-      offset.value += PAGE_SIZE; // 加载成功之后，再准备加载下一页
+    try {
+      const { songs } = await getTrackDetail(req_ids);
+      if (songs) {
+        tracks.push(...songs);
+        offset.value += PAGE_SIZE; // 加载成功之后，再准备加载下一页
+      }
+      loading.value = false;
+    } catch (error) {
+      loading.value = false;
+      console.log(error);
     }
-    loading.value = false;
   }
 
   function playAll(): void {
@@ -126,7 +134,7 @@
     if (scrollBox.value === null) return;
     const offsetTop = 360 - Number(scrollBox.value.scrollTop);
     rate.value = offsetTop / 360;
-    fixed.value = offsetTop <= 68; //提前4px执行fixed，看起来更丝滑
+    fixed.value = offsetTop <= 70; //提前执行fixed，看起来更丝滑
 
     // 触底加载
     const offsetBottom = scrollBox.value.scrollHeight - scrollBox.value.scrollTop - scrollBox.value.clientHeight;
@@ -140,7 +148,7 @@
     @apply active:bg-gray-200 py-3 px-8 bg-white text-black rounded-full text-base font-semibold;
   }
   .playlist-info {
-    @apply flex flex-col items-center pt-16 fixed top-0 left-0 right-0 z-0 px-2 transform origin-bottom bg-gradient-to-b from-red-500 via-gray-800 to-gray-900;
+    @apply flex flex-col items-center pt-16 fixed top-0 left-0 right-0 z-0 px-2 transform origin-bottom bg-gradient-to-b from-red-500 to-gray-900;
   }
   .scroll-wrapper {
     padding-top: 21rem;

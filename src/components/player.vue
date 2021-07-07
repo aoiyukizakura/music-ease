@@ -8,12 +8,7 @@
       @drag-end="change($event)"
     ></process-bar>
     <img v-if="player.currentTrack" :src="player.currentTrack?.al?.picUrl" alt="封面" class="h-16 w-16 object-cover" />
-    <img
-      v-else
-      src="../assets/default-music.jpg"
-      alt="封面"
-      class="h-16 w-16 object-cover"
-    />
+    <img v-else src="../assets/default-music.jpg" alt="封面" class="h-16 w-16 object-cover" />
     <div class="flex-1 overflow-hidden mx-2">
       <div
         v-if="player.total"
@@ -69,13 +64,15 @@
 
   function onTouchStart(e: TouchEvent) {
     startX.value = e.touches[0].pageX;
+    scrollContent.value?.classList.remove('transition-transform');
   }
   function onTouchMove(e: TouchEvent) {
     distanceX.value = e.touches[0].pageX - startX.value;
   }
   function onTouchEnd(e: TouchEvent) {
-    if(distanceX.value > 100) player.value._playPrev()
-    if(distanceX.value < -100) player.value._playNext()
+    if (distanceX.value > 120) player.value._playPrev();
+    if (distanceX.value < -120) player.value._playNext();
+    scrollContent.value?.classList.add('transition-transform');
     startX.value = 0;
     distanceX.value = 0;
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="home-wrapper h-full overflow-y-auto pb-4">
+  <div class="home-wrapper h-full overflow-y-auto py-4 px-2">
     <div>
       <h2 class="dark:text-white text-xl font-bold">推荐歌单</h2>
       <div>

@@ -1,7 +1,7 @@
 const colors = require('tailwindcss/colors');
 
 module.exports = {
-  mode: 'jit',
+  // mode: 'jit',
   purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   darkMode: 'class', // or 'media' or 'class'
   theme: {
@@ -21,7 +21,7 @@ module.exports = {
   variants: {
     extend: {
       backgroundColor: ['active'],
-      scale: ['focus'],
+      scale: ['focus','active'],
       translate: ['focus']
     },
   },

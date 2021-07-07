@@ -1,6 +1,6 @@
 <template>
-  <div class="search-wrapper pt-24 h-full relative">
-    <header class="absolute top-0 right-0 left-0">
+  <div class="search-wrapper pt-24 h-full relative flex flex-col">
+    <header class="absolute top-0 right-0 left-0 pt-4 px-2">
       <h2 class="dark:text-white text-xl font-bold">搜索</h2>
       <input
         v-model="keyword"
@@ -12,7 +12,7 @@
         @keypress.enter="onSearch"
       />
     </header>
-    <ul class="overflow-y-auto h-full">
+    <ul class="overflow-y-auto mt-4">
       <playlist-item
         class="mb-1"
         v-for="(song, i) in songs"
