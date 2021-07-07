@@ -25,9 +25,9 @@ export default defineConfig({
       '/@style': resolve(__dirname, 'src/assets/style'),
       '/@views': resolve(__dirname, 'src/views'),
       '/@cp': resolve(__dirname, 'src/components'),
-    }
+    },
   },
-  base: './',
+  base: '/',
   css: {
     postcss: "./postcss.config.js"
   }

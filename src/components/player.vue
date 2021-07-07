@@ -1,5 +1,5 @@
 <template>
-  <div class="player box-border dark:bg-gray-800 text-white flex h-16 items-center relative">
+  <div class="player dark:bg-gray-800 box-border text-white flex h-16 items-center relative">
     <process-bar
       class="slider absolute left-0 z-20 w-full"
       :disabled="!player.currentTrack"

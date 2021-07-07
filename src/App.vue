@@ -1,15 +1,15 @@
 <template>
-  <main class="flex flex-col pb-32 relative h-full dark:bg-gray-900 dark:text-white">
+  <main class="dark:bg-gray-900 dark:text-white flex flex-col pb-32 relative h-full">
     <div class="mt-4 mx-2 h-full overflow-hidden relative">
       <router-view v-slot="{ Component, route }">
         <template v-if="Component">
           <keep-alive>
             <suspense :timeout="0">
               <template #default>
-                <component :is="Component" :key="route.name" />
+                <component :is="Component" :key="route.fullPath" />
               </template>
               <template #fallback>
-                <div>{{ route.name }} Loading...</div>
+                <div class="w-full text-center">{{ route.name }} Loading...</div>
               </template>
             </suspense>
           </keep-alive>

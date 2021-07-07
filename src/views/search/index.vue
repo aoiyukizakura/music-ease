@@ -22,7 +22,10 @@
         :pic-url="song.al.picUrl"
         @on-play="player._playTrack(0, song)"
       />
-      <li v-if="more" class="w-full text-center text-sm text-gray-400 my-4">
+      <li v-if="loading" class="w-full text-center text-sm text-gray-400 my-4">
+        <span>加载中...</span>
+      </li>
+      <li v-else-if="more" class="w-full text-center text-sm text-gray-400 my-4">
         <span @click="onSearch">加载更多</span>
       </li>
     </ul>
@@ -41,18 +44,22 @@
   const keyword = ref('');
   const page = ref(1);
   const more = ref(false);
+  const loading = ref(false);
   const songs: any[] = reactive<any[]>([]);
   const users: any[] = reactive([]);
 
   async function onSearch() {
     try {
+      loading.value = true;
       const { result } = await search({ keywords: keyword.value, limit: 10, offset: page.value - 1, type: 1 });
       const ids = result.songs.map((i: any) => i.id).join(',');
       const { songs: res_songs } = await getTrackDetail(ids);
       songs.push(...res_songs);
       page.value++;
       more.value = result.hasMore;
+      loading.value = false;
     } catch (e) {
+      loading.value = false;
       console.log(e);
     }
   }

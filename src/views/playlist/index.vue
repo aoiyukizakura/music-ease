@@ -53,9 +53,8 @@
 </template>
 <script setup lang="ts">
   import { reactive, ref } from '@vue/reactivity';
-  import type { Ref } from '@vue/reactivity';
   import PlaylistItem from '/@cp/playlist-item.vue';
-  import { computed, onBeforeUnmount, onDeactivated, onMounted } from '@vue/runtime-core';
+  import { computed, onActivated, onBeforeUnmount, onDeactivated, onMounted } from '@vue/runtime-core';
   import { getPlaylistDetail } from '/@/api/playlist';
   import { useRoute } from 'vue-router';
   import { useStore } from '/@/store';
@@ -72,34 +71,34 @@
     fixed.value = false;
   });
 
+  const PAGE_SIZE = 20;
   const store = useStore();
+
   const player = computed(() => store.state.player);
   const isPlayingThisList = computed(() => playlistData.id === player.value.listId);
-
-  const PAGE_SIZE = 10;
+  const playlistId = computed(() => Number(useRoute().params.id));
 
   const fixed = ref(false);
   const rate = ref(1);
-  const next_page = ref(2);
+  const offset = ref(0);
   const loading = ref(false);
   const scrollBox = ref<HTMLElement | null>(null);
   const tracks: any[] = reactive([]);
-
-  const playlistId = Number(useRoute().params.id);
-  const { playlist: playlistData } = await getPlaylistDetail(playlistId);
+  const { playlist: playlistData } = await getPlaylistDetail(playlistId.value);
   const playlistIds = Array.prototype.concat([], playlistData.trackIds);
   tracks.push(...playlistData.tracks);
+  offset.value = tracks.length;
 
-  async function getData(): Promise<void> {
+  async function getMore(): Promise<void> {
     loading.value = true;
     const req_ids: string = playlistIds
-      .slice(PAGE_SIZE * (next_page.value - 1), PAGE_SIZE * next_page.value)
+      .slice(offset.value, offset.value + PAGE_SIZE)
       .map((t: any) => t.id)
       .join(',');
     const { songs } = await getTrackDetail(req_ids);
     if (songs) {
       tracks.push(...songs);
-      next_page.value++; // 加载成功之后，再准备加载下一页
+      offset.value += PAGE_SIZE; // 加载成功之后，再准备加载下一页
     }
     loading.value = false;
   }
@@ -131,8 +130,8 @@
 
     // 触底加载
     const offsetBottom = scrollBox.value.scrollHeight - scrollBox.value.scrollTop - scrollBox.value.clientHeight;
-    if (offsetBottom < 60 && !loading.value && (next_page.value - 1) * PAGE_SIZE <= playlistIds.length) {
-      getData();
+    if (offsetBottom < 60 && !loading.value && offset.value < playlistIds.length) {
+      getMore();
     }
   }
 </script>

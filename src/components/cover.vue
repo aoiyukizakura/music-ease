@@ -5,7 +5,7 @@
       :src="picUrl"
       alt="封面"
     />
-    <p class="overflow-elision-2 text-sm dark:text-gray-400 mt-1">{{ name }}</p>
+    <p class="dark:text-gray-400 overflow-elision-2 text-sm mt-1">{{ name }}</p>
   </router-link>
 </template>
 <script setup lang="ts">
