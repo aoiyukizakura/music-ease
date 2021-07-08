@@ -12,7 +12,7 @@
         @keypress.enter="onSearch"
       />
     </header>
-    <ul class="overflow-y-auto mt-4">
+    <ul class="overflow-y-auto mt-4 flex-1">
       <playlist-item
         class="mb-1"
         v-for="(song, i) in songs"
@@ -40,7 +40,6 @@
 
   const store = useStore();
   const player = computed(() => store.state.player);
-
   const keyword = ref('');
   const page = ref(1);
   const more = ref(false);

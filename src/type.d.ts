@@ -1,6 +1,6 @@
 interface params {
   timestamp?: number,
-  limit?:number,
+  limit?: number,
   [key: string]: any
 }
 // 推荐歌单
@@ -46,3 +46,10 @@ type ItopPlaylistParam = {
 //对歌单添加或删除歌曲
 
 //每日推荐
+
+
+//枚举
+export enum LOGIN_TYPE {
+  ACCOUNT,
+  USERNAME,
+}

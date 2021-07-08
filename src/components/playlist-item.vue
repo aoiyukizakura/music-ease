@@ -1,5 +1,5 @@
 <template>
-  <li class="flex flex-row mx-2 space-x-3 items-center overflow-hidden relative transform transition-transform duration-75 active:scale-95">
+  <li class="flex flex-row mx-2 space-x-3 items-center overflow-hidden relative transform transition-transform duration-150 active:scale-95">
     <!-- <div class="mask absolute top-0 bottom-0 left-0 right-0 bg-gray-500 opacity-10 z-10"></div> -->
     <img :src="picUrl ? picUrl : '/default-music.jpg'" class="w-14 h-14 flex-none object-cover" alt="歌曲封面" />
     <div class="flex-1 overflow-hidden" @click="$emit('on-play')">

@@ -6,12 +6,9 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
-    component: () => import("/@views/home/index.vue")
-  },
-  {
-    path: '/login',
-    name: 'login',
-    component: () => import('/@views/login/index.vue')
+    component: () => import("/@views/home/index.vue"),
+    meta: {
+    }
   },
   {
     path: '/library',
@@ -24,12 +21,22 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/search',
     name: 'search',
-    component: () => import('/@views/search/index.vue')
+    component: () => import('/@views/search/index.vue'),
+    meta: {
+    }
+  },
+  {
+    path: '/login/:type',
+    name: 'login',
+    component: () => import('/@views/login/index.vue'),
+    meta: {
+    }
   },
   {
     path: '/playlist/:id',
     name: 'playlist',
-    component: () => import('/@views/playlist/index.vue')
+    component: () => import('/@views/playlist/index.vue'),
+    meta: {}
   },
 ]
 
