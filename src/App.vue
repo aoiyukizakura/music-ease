@@ -4,19 +4,19 @@
       <router-view v-slot="{ Component, route }">
         <template v-if="Component">
           <transition mode="out-in" name="fade">
-            <!-- <keep-alive max="10"> -->
-            <suspense :timeout="0">
-              <template #default>
-                <component :is="Component" :key="route.fullPath" />
-              </template>
-              <template #fallback>
-                <div class="loading w-full h-full flex flex-col justify-center items-center space-y-2">
-                  <loading></loading>
-                  <p class="text-sm">加载中...</p>
-                </div>
-              </template>
-            </suspense>
-            <!-- </keep-alive> -->
+            <keep-alive max="10">
+              <suspense :timeout="0">
+                <template #default>
+                  <component :is="Component" :key="route.fullPath" />
+                </template>
+                <template #fallback>
+                  <div class="loading w-full h-full flex flex-col justify-center items-center space-y-2">
+                    <loading></loading>
+                    <p class="text-sm">加载中...</p>
+                  </div>
+                </template>
+              </suspense>
+            </keep-alive>
           </transition>
         </template>
       </router-view>
@@ -71,7 +71,7 @@
     outline: none !important;
     border: none !important;
   }
-  
+
   .fade-leave-to,
   .fade-enter-from {
     opacity: 0;

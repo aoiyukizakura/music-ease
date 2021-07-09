@@ -1,3 +1,4 @@
+import { IHighQualityPlaylistParam, ItopPlaylistParam, params } from '/@/index.d';
 import request from '/@/utils/request';
 
 
@@ -38,7 +39,7 @@ export function dailyRecommendPlaylist(params: params) {
  * - s : 歌单最近的 s 个收藏者, 默认为8
  * @param {number} id
  */
-export function getPlaylistDetail(id: number):any {
+export function getPlaylistDetail(id: number): any {
   let params = { id };
   return request({
     url: '/playlist/detail',
