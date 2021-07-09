@@ -18,7 +18,7 @@
           :style="rate > 0 ? `transform: scale(${0.4 * rate + 0.6}` : 'transform: scale(0)'"
           class="flex flex-col items-center overflow-hidden w-full transform"
         >
-          <img :src="playlistData.coverImgUrl" alt="封面" class="h-48 w-48 object-cover align-bottom" />
+          <img v-img="playlistData.coverImgUrl" alt="封面" class="h-48 w-48 object-cover align-bottom" />
           <figcaption class="text-center w-full">
             <h1 class="text-2xl mt-2 truncate">{{ playlistData.name }}</h1>
             <p class="text-sm font-light mt-1 overflow-elision-2">{{ playlistData.description }}</p>

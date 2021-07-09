@@ -7,7 +7,7 @@
       @drag-start="player._pause()"
       @drag-end="change($event)"
     ></process-bar>
-    <img v-if="player.currentTrack" :src="player.currentTrack?.al?.picUrl" alt="封面" class="h-16 w-16 object-cover" />
+    <img v-if="player.currentTrack" v-img="player.currentTrack?.al?.picUrl" alt="封面" class="h-16 w-16 object-cover" />
     <img v-else src="../assets/default-music.jpg" alt="封面" class="h-16 w-16 object-cover" />
     <div class="flex-1 overflow-hidden mx-2">
       <div

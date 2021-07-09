@@ -1,31 +1,69 @@
 <template>
-  <div class="h-full pt-4 px-2">
-    <div class="text-center h-full flex flex-col space-y-3 justify-center">
-      <button class="bg-red-500 active:scale-95 btn" type="button" @click="router.push(`/login/${LOGIN_TYPE.ACCOUNT}`)">
-        账号登录
-      </button>
-      <button
-        class="bg-red-500 active:scale-95 btn"
-        type="button"
-        @click="router.push(`/login/${LOGIN_TYPE.USERNAME}`)"
-      >
-        昵称登录
-      </button>
+  <div class="h-full relativeflex flex-col flex">
+    <template v-if="userinfo.userId">
+      <header class="bg-gray-800 shadow-lg py-4 px-2 absolute top-0 w-full flex self-start items-center space-x-3">
+        <img v-img="userinfo.avatarUrl" alt="头像" class="h-12 w-12 rounded-full relative z-10" />
+        <h2 class="flex-1">{{ userinfo.nickname }}的歌单</h2>
+        <svg-icon
+          @click="
+            store.commit('UPDATE_USERINFO', '{}');
+            router.replace('/library');
+          "
+          name="logout"
+        ></svg-icon>
+      </header>
+      <ul class="flex-1 overflow-y-auto mt-20 flex flex-wrap px-2 py-4 justify-center">
+        <cover
+          class="mt-3 mx-3"
+          v-for="(p, i) in playlist"
+          :key="i"
+          :name="p.name"
+          :pic-url="p.coverImgUrl"
+          :id="p.id"
+        ></cover>
+      </ul>
+    </template>
+    <div class="text-center h-full flex flex-col space-y-3 justify-center" v-else>
+      <button class="btn-primary" type="button" @click="router.push(`/login/${LOGIN_TYPE.ACCOUNT}`)">账号登录</button>
+      <button class="btn-primary" type="button" @click="router.push(`/login/${LOGIN_TYPE.USERNAME}`)">昵称登录</button>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { computed, ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import { LOGIN_TYPE } from '/@/type';
+  import { LOGIN_TYPE } from '/@/index.d';
+  import { useStore } from '/@/store';
+  import SvgIcon from '/@/components/svg-icon.vue';
+  import Cover from '/@/components/cover.vue';
+  import { userPlaylist } from '/@/api/user';
+
+  const PAGE_SIZE = 10;
+
+  const store = useStore();
   const router = useRouter();
+  const userinfo = computed(() => store.state.userInfo);
+
+  const loading = ref(false);
+  const playlist = ref<any[]>([]);
+  const offset = ref(1);
+
+  if (userinfo.value) {
+    try {
+      const { more, playlist: pl } = await userPlaylist({
+        uid: userinfo.value.userId,
+        limit: PAGE_SIZE,
+        offset: offset.value,
+      });
+      playlist.value = pl;
+      offset.value += PAGE_SIZE;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 </script>
 
 <style lang="postcss">
-  .btn {
-    @apply block outline-none rounded text-center px-6 py-3 text-sm text-white focus:outline-none transform transition-all duration-150 mx-auto;
-  }
-
   .jump-active-enter,
   .jump-active-leave {
     transition: transform 0.25s;

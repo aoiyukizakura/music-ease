@@ -45,6 +45,7 @@
   </div>
 </template>
 <script setup lang="ts">
+  import type { IRecommendPlaylist } from '/@/index.d';
   import { recommendPlaylist, toplists, topPlaylist } from '/@/api/playlist';
   import Cover from '/@cp/cover.vue';
   import ScrollPanel from '/@cp/scroll-panel.vue';

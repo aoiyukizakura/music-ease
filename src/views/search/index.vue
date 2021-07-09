@@ -38,10 +38,12 @@
   import { useStore } from '/@/store';
   import PlaylistItem from '/@cp/playlist-item.vue';
 
+  const PAGE_SIZE = 20;
+
   const store = useStore();
   const player = computed(() => store.state.player);
   const keyword = ref('');
-  const page = ref(1);
+  const offset = ref(0);
   const more = ref(false);
   const loading = ref(false);
   const songs: any[] = reactive<any[]>([]);
@@ -50,16 +52,16 @@
   async function onSearch() {
     try {
       loading.value = true;
-      const { result } = await search({ keywords: keyword.value, limit: 10, offset: page.value - 1, type: 1 });
+      const { result } = await search({ keywords: keyword.value, limit: PAGE_SIZE, offset: offset.value, type: 1 });
       const ids = result.songs.map((i: any) => i.id).join(',');
       const { songs: res_songs } = await getTrackDetail(ids);
       songs.push(...res_songs);
-      page.value++;
+      offset.value += PAGE_SIZE;
       more.value = result.hasMore;
-      loading.value = false;
     } catch (e) {
-      loading.value = false;
       console.log(e);
+    } finally {
+      loading.value = false;
     }
   }
 </script>
