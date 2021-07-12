@@ -1,5 +1,6 @@
 import request from '/@/utils/request';
-import { params } from '/@/index.d';
+import { AxiosPromise } from 'axios';
+import { UserPlayList } from '/@/index.d';
 
 /**
  * 获取用户详情
@@ -43,7 +44,7 @@ export function userAccount() {
  * @param {number} params.limit
  * @param {number=} params.offset
  */
-export function userPlaylist(params: { uid: number, limit: number, offset: number }): Promise<any> {
+export function userPlaylist(params: { uid: number, limit: number, offset: number }): AxiosPromise<UserPlayList> {
   return request({
     url: '/user/playlist',
     method: 'get',
@@ -109,7 +110,11 @@ export function likedAlbums(params: { offset: number, limit: number }) {
  * 获取收藏的歌手（需要登录）
  * 说明 : 调用此接口可获取到用户收藏的歌手
  */
-export function likedArtists(params: params) {
+export function likedArtists(params: {
+  timestamp?: number,
+  limit?: number,
+  [key: string]: any
+}) {
   return request({
     url: '/artist/sublist',
     method: 'get',
@@ -124,7 +129,11 @@ export function likedArtists(params: params) {
  * 获取收藏的MV（需要登录）
  * 说明 : 调用此接口可获取到用户收藏的MV
  */
-export function likedMVs(params: params) {
+export function likedMVs(params: {
+  timestamp?: number,
+  limit?: number,
+  [key: string]: any
+}) {
   return request({
     url: '/mv/sublist',
     method: 'get',

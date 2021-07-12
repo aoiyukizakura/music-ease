@@ -9,7 +9,7 @@
         id="keyword"
         class="mt-3 w-full text-base text-gray-600 placeholder-gray-600 font-semibold py-2 px-4 rounded outline-none"
         placeholder="关键字"
-        @keypress.enter="onSearch"
+        @keypress.enter="onSearch()"
       />
     </header>
     <ul class="overflow-y-auto mt-4 flex-1">
@@ -17,22 +17,21 @@
         class="mb-1"
         v-for="(song, i) in songs"
         :key="i"
-        :artist="song.ar"
-        :name="song.name"
-        :pic-url="song.al.picUrl"
+        :track="song"
         @on-play="player._playTrack(0, song)"
       />
       <li v-if="loading" class="w-full text-center text-sm text-gray-400 my-4">
         <span>加载中...</span>
       </li>
       <li v-else-if="more" class="w-full text-center text-sm text-gray-400 my-4">
-        <span @click="onSearch">加载更多</span>
+        <span @click="onSearch(true)">加载更多</span>
       </li>
     </ul>
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, reactive, ref } from 'vue';
+  import { computed, ref } from 'vue';
+  import type { ISearchUser, Track } from '/@/index.d';
   import { search } from '/@/api/others';
   import { getTrackDetail } from '/@/api/track';
   import { useStore } from '/@/store';
@@ -42,22 +41,32 @@
 
   const store = useStore();
   const player = computed(() => store.state.player);
+
   const keyword = ref('');
   const offset = ref(0);
   const more = ref(false);
   const loading = ref(false);
-  const songs: any[] = reactive<any[]>([]);
-  const users: any[] = reactive([]);
 
-  async function onSearch() {
+  const songs = ref<Track[]>([]);
+  const users = ref<ISearchUser[]>([]);
+
+  async function onSearch(loadmore: boolean = false) {
     try {
       loading.value = true;
-      const { result } = await search({ keywords: keyword.value, limit: PAGE_SIZE, offset: offset.value, type: 1 });
-      const ids = result.songs.map((i: any) => i.id).join(',');
-      const { songs: res_songs } = await getTrackDetail(ids);
-      songs.push(...res_songs);
-      offset.value += PAGE_SIZE;
-      more.value = result.hasMore;
+      if (!loadmore) {
+        offset.value = 0;
+        songs.value = [];
+      }
+      const {
+        data: { result },
+      } = await search({ keywords: keyword.value, limit: PAGE_SIZE, offset: offset.value, type: 1 });
+      if (result.songs) {
+        const ids = result.songs.map((i: any) => i.id).join(',');
+        const { data } = await getTrackDetail(ids);
+        songs.value = songs.value.concat(data.songs);
+        offset.value += PAGE_SIZE;
+        more.value = result.hasMore;
+      }
     } catch (e) {
       console.log(e);
     } finally {

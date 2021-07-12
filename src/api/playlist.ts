@@ -1,7 +1,14 @@
-import { IHighQualityPlaylistParam, ItopPlaylistParam, params } from '/@/index.d';
+import { AxiosPromise } from 'axios';
+import { IHighQualityPlaylistParam, IRankListData, ITopPlaylistData } from '/@/index.d';
 import request from '/@/utils/request';
+import { IRecommendPlaylist, IPlaylistDetailData } from '../index';
 
-
+export interface IRecommendPlaylistData {
+  category: number
+  code: number
+  hasTaste: boolean
+  result: IRecommendPlaylist[]
+}
 /**
  * 推荐歌单
  * 说明 : 调用此接口 , 可获取推荐歌单
@@ -10,7 +17,11 @@ import request from '/@/utils/request';
  * @param {Object} params
  * @param {number=} params.limit
  */
-export function recommendPlaylist(params: params): any {
+export function recommendPlaylist<T = IRecommendPlaylistData>(params: {
+  timestamp?: number,
+  limit?: number,
+  [key: string]: any
+}): AxiosPromise<T> {
   return request({
     url: '/personalized',
     method: 'get',
@@ -23,7 +34,11 @@ export function recommendPlaylist(params: params): any {
  * @param {Object} params
  * @param {number=} params.limit
  */
-export function dailyRecommendPlaylist(params: params) {
+export function dailyRecommendPlaylist(params: {
+  timestamp?: number,
+  limit?: number,
+  [key: string]: any
+}) {
   return request({
     url: '/recommend/resource',
     method: 'get',
@@ -39,7 +54,7 @@ export function dailyRecommendPlaylist(params: params) {
  * - s : 歌单最近的 s 个收藏者, 默认为8
  * @param {number} id
  */
-export function getPlaylistDetail(id: number): any {
+export function getPlaylistDetail(id: number): AxiosPromise<IPlaylistDetailData> {
   let params = { id };
   return request({
     url: '/playlist/detail',
@@ -65,6 +80,7 @@ export function highQualityPlaylist(params: IHighQualityPlaylistParam) {
     params,
   });
 }
+
 /**
  * 歌单 ( 网友精选碟 )
  * 说明 : 调用此接口 , 可获取网友精选碟歌单
@@ -76,7 +92,7 @@ export function highQualityPlaylist(params: IHighQualityPlaylistParam) {
  * @param {string} params.cat
  * @param {number=} params.limit
  */
-export function topPlaylist(params?: ItopPlaylistParam): any {
+export function topPlaylist(params?: { order?: 'new' | 'hot', cat?: string, limit?: number }): AxiosPromise<ITopPlaylistData> {
   return request({
     url: '/top/playlist',
     method: 'get',
@@ -99,7 +115,7 @@ export function playlistCatlist() {
  * 所有榜单
  * 说明 : 调用此接口,可获取所有榜单 接口地址 : /toplist
  */
-export function toplists(): any {
+export function toplists(): AxiosPromise<IRankListData> {
   return request({
     url: '/toplist',
     method: 'get',
@@ -115,7 +131,11 @@ export function toplists(): any {
  * @param {number} params.t
  * @param {number} params.id
  */
-export function subscribePlaylist(params: params) {
+export function subscribePlaylist(params: {
+  timestamp?: number,
+  limit?: number,
+  [key: string]: any
+}) {
   params.timestamp = new Date().getTime();
   return request({
     url: '/playlist/subscribe',
@@ -149,7 +169,11 @@ export function deletePlaylist(id: number) {
  * @param {number} params.privacy
  * @param {string} params.type
  */
-export function createPlaylist(params: params) {
+export function createPlaylist(params: {
+  timestamp?: number,
+  limit?: number,
+  [key: string]: any
+}) {
   params.timestamp = new Date().getTime();
   return request({
     url: '/playlist/create',
@@ -167,7 +191,11 @@ export function createPlaylist(params: params) {
  * @param {string} params.op
  * @param {string} params.pid
  */
-export function addOrRemoveTrackFromPlaylist(params: params) {
+export function addOrRemoveTrackFromPlaylist(params: {
+  timestamp?: number,
+  limit?: number,
+  [key: string]: any
+}) {
   params.timestamp = new Date().getTime();
   return request({
     url: '/playlist/tracks',

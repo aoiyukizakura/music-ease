@@ -12,7 +12,7 @@
           name="username"
           id="username"
           placeholder="请输入您的网易云用户名"
-          @keypress.enter="onSearch"
+          @keypress.enter="onSearch()"
         />
       </fieldset>
       <ul class="mt-4 space-y-2 overflow-y-auto flex-1 pb-4">
@@ -29,6 +29,12 @@
             <p class="text-sm text-gray-400 mt-1 overflow-elision-3">{{ u.signature }}</p>
           </div>
           <span class="btn-primary absolute -right-20" @click="doLogin"> 确认 </span>
+        </li>
+        <li v-if="loading" class="w-full text-center text-sm text-gray-400 my-4">
+          <span>加载中...</span>
+        </li>
+        <li v-else-if="more" class="w-full text-center text-sm text-gray-400 my-4">
+          <span @click="onSearch(true)">加载更多</span>
         </li>
       </ul>
     </div>
@@ -49,23 +55,33 @@
 
   const nickname = ref('');
   const loading = ref(false);
+  const more = ref(false);
+  const offset = ref(0);
   const index = ref(-1);
-  const userProfiles = ref<ISearchUser[] | null>(null);
+  const userProfiles = ref<ISearchUser[]>([]);
 
   async function doLogin(): Promise<void> {
     if (!userProfiles.value) return;
 
     store.commit('UPDATE_USERINFO', userProfiles.value[index.value]);
     console.log(store.state.userInfo);
-    router.replace('/library');
+    router.replace('/library?refresh=1');
   }
 
-  async function onSearch() {
+  async function onSearch(loadmore: boolean = false) {
     if (!nickname.value) return;
+    if (!loadmore) {
+      offset.value = 0;
+      userProfiles.value = [];
+    }
     loading.value = true;
     try {
-      const { result } = await search({ keywords: nickname.value, limit: PAGE_SIZE, type: 1002 });
-      userProfiles.value = result.userprofiles;
+      const { data } = await search({ keywords: nickname.value, limit: PAGE_SIZE, offset: offset.value, type: 1002 });
+      if (data.result.userprofiles) {
+        userProfiles.value = userProfiles.value.concat(data.result.userprofiles);
+        offset.value += PAGE_SIZE;
+        more.value = data.result.hasMore;
+      }
     } catch (e) {
       console.log(e);
     } finally {

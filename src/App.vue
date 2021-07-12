@@ -7,7 +7,7 @@
             <keep-alive max="10">
               <suspense :timeout="0">
                 <template #default>
-                  <component :is="Component" :key="route.fullPath" />
+                  <component :is="Component" :key="route.fullPath" @on-error="pageStatus = false" />
                 </template>
                 <template #fallback>
                   <div class="loading w-full h-full flex flex-col justify-center items-center space-y-2">
@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed } from '@vue/runtime-core';
+  import { computed, ref } from '@vue/runtime-core';
   import { useRoute } from 'vue-router';
   import { useStore } from './store';
   import NavigationBar from '/@cp/navigation-bar.vue';
@@ -38,6 +38,8 @@
 
   const route = computed(() => useRoute());
   const player = computed(() => useStore().state.player);
+
+  const pageStatus = ref(true);
 </script>
 
 <style lang="postcss">

@@ -1,12 +1,6 @@
 import { Howl, Howler } from 'howler'
-import { urlToHttpOptions } from 'http';
 import { getTrackDetail } from '../api/track';
-interface track {
-  id: number;
-  ar?: any[];
-  al?: any;
-  [k: string]: any
-}
+import { Track, TrackId } from '/@/index.d';
 export default class Player {
   private static instance: Player;
 
@@ -15,17 +9,17 @@ export default class Player {
   private _volume: number; // 0 to 1
   private _volumeBeforeMuted: number; // 用于保存静音前的音量
 
-  private _list: track[];// 播放列表
+  private _list: TrackId[] | Track[];// 播放列表
   private _listId: number | null;
   private _current: number; // 当前播放歌曲在播放列表里的index
-  private _currentTrack: track | null; // 当前播放歌曲的详细信息
+  private _currentTrack: Track | null; // 当前播放歌曲的详细信息
 
   private _howl: Howl | null;
   private AF: number;
   private _visible: boolean;
 
 
-  private constructor(list?: track[], index?: number) {
+  private constructor(list?: TrackId[], index?: number) {
     this._playing = false;
     this._progress = 0;
     this._volume = 1;
@@ -48,14 +42,19 @@ export default class Player {
     }
     return Player.instance;
   }
-  async _playTrack(index: number = 0, track?: track): Promise<void> {
+  async _playTrack(index: number = 0, track?: Track): Promise<void> {
     this.current = index;
     if (track) {
       this.list = [track];
       this.currentTrack = track;
     } else {
-      const currentTrackId = this.list?.[index]?.id
-      this.currentTrack = (await getTrackDetail(String(currentTrackId))).songs[0];
+      const currentTrackId = this.list[index]?.id
+      const trackData = (await getTrackDetail(currentTrackId)).data.songs[0];
+      if (trackData.fee !== 0 && (!trackData.fee || trackData.fee === 1 || trackData.fee === 4)) {
+        this._playNext()
+        return;
+      }
+      this.currentTrack = trackData;
     }
     Howler.unload();
     document.title = `Musicease - ${this.currentTrack.name}`
@@ -117,13 +116,13 @@ export default class Player {
     this.howl.stop()
   }
   _seek(v: number): void {
-    this.howl?.seek(v * (this.currentTrack.dt / 1000));
+    if (this.currentTrack === null || this.howl === null) return;
+    this.howl.seek(v * (this.currentTrack.dt / 1000));
     this.progress = v
   }
 
   _step(): void {
-    if (!this.playing) return;
-    if (this.howl === null) return;
+    if (!this.playing || this.currentTrack === null || this.howl === null) return;
     const seek = this.howl.seek();
     if (typeof seek === "number") {
       this.progress = seek / (this.currentTrack.dt / 1000);
@@ -158,10 +157,10 @@ export default class Player {
   public set volumeBeforeMuted(v: number) {
     this._volumeBeforeMuted = v;
   }
-  public get list(): any[] {
+  public get list(): TrackId[] | Track[] {
     return this._list;
   }
-  public set list(v: any[]) {
+  public set list(v: TrackId[] | Track[]) {
     this._list = v;
   }
   public get listId(): number | null {
@@ -176,10 +175,10 @@ export default class Player {
   public set current(v: number) {
     this._current = v;
   }
-  public get currentTrack(): any {
+  public get currentTrack(): Track | null {
     return this._currentTrack;
   }
-  public set currentTrack(v: any) {
+  public set currentTrack(v: Track | null) {
     this._currentTrack = v;
   }
   public get howl(): Howl | null {
@@ -192,7 +191,7 @@ export default class Player {
     return this.list.length
   }
   public get music_url(): string {
-    return `https://music.163.com/song/media/outer/url?id=${this.currentTrack.id}.mp3`;
+    return `https://music.163.com/song/media/outer/url?id=${this.currentTrack?.id}.mp3`;
   }
   public set visible(v: boolean) {
     this._visible = v;

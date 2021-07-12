@@ -1,3 +1,5 @@
+import { AxiosPromise } from "axios";
+import { Search } from "/@/index.d";
 import request from "../utils/request";
 
 /**
@@ -15,7 +17,7 @@ import request from "../utils/request";
  * @param {number=} params.offset
  * @param {number=} params.type
  */
-export function search(params: { keywords: string; limit?: number; offset?: number; type?: number }): Promise<any> {
+export function search(params: { keywords: string; limit?: number; offset?: number; type?: number }): AxiosPromise<Search> {
   return request({
     url: '/search',
     method: 'get',

@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full relativeflex flex-col flex">
+  <div v-if="pageStatus" class="h-full relativeflex flex-col flex">
     <template v-if="userinfo.userId">
       <header class="bg-gray-800 shadow-lg py-4 px-2 absolute top-0 w-full flex self-start items-center space-x-3">
         <img v-img="userinfo.avatarUrl" alt="头像" class="h-12 w-12 rounded-full relative z-10" />
@@ -30,9 +30,10 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, ref } from 'vue';
-  import { useRouter } from 'vue-router';
+  import { computed, onActivated, ref } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
   import { LOGIN_TYPE } from '/@/index.d';
+  import type { Playlist } from '/@/index.d';
   import { useStore } from '/@/store';
   import SvgIcon from '/@/components/svg-icon.vue';
   import Cover from '/@/components/cover.vue';
@@ -42,23 +43,39 @@
 
   const store = useStore();
   const router = useRouter();
+  const route = useRoute();
+
   const userinfo = computed(() => store.state.userInfo);
 
   const loading = ref(false);
-  const playlist = ref<any[]>([]);
+  const pageStatus = ref(true);
+  const playlist = ref<Playlist[]>([]);
   const offset = ref(1);
 
-  if (userinfo.value) {
+  onActivated(() => {
+    if (userinfo.value.userId && route.query.refresh) {
+      getUserData();
+    }
+  });
+
+  if (userinfo.value.userId) {
+    getUserData();
+  }
+  async function getUserData(): Promise<void> {
+    loading.value = true;
     try {
-      const { more, playlist: pl } = await userPlaylist({
+      const { data } = await userPlaylist({
         uid: userinfo.value.userId,
         limit: PAGE_SIZE,
         offset: offset.value,
       });
-      playlist.value = pl;
+      playlist.value = data.playlist;
       offset.value += PAGE_SIZE;
     } catch (error) {
       console.log(error);
+      pageStatus.value = false;
+    } finally {
+      loading.value = false;
     }
   }
 </script>

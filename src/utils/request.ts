@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { production_url } from './config.spec';
 
-const baseURL = 
+const baseURL =
   process.env.NODE_ENV === "development"
     ? '/api' : production_url;
 
@@ -19,9 +19,5 @@ service.interceptors.request.use(config => {
   }
   return config
 })
-service.interceptors.response.use(
-  response => response.data,
-  error => Promise.reject(error)
-)
 
 export default service;
