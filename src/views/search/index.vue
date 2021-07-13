@@ -30,7 +30,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, ref } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
   import type { ISearchUser, Track } from '/@/index.d';
   import { search } from '/@/api/others';
   import { getTrackDetail } from '/@/api/track';
@@ -73,5 +73,6 @@
       loading.value = false;
     }
   }
+
 </script>
 <style lang="postcss"></style>

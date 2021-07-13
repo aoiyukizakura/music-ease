@@ -4,7 +4,7 @@
       <router-view v-slot="{ Component, route }">
         <template v-if="Component">
           <transition mode="out-in" name="fade">
-            <keep-alive max="10">
+            <!-- <keep-alive max="10"> -->
               <suspense :timeout="0">
                 <template #default>
                   <component :is="Component" :key="route.fullPath" @on-error="pageStatus = false" />
@@ -16,7 +16,7 @@
                   </div>
                 </template>
               </suspense>
-            </keep-alive>
+            <!-- </keep-alive> -->
           </transition>
         </template>
       </router-view>
