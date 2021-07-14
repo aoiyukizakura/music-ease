@@ -4,10 +4,10 @@
       <router-view v-slot="{ Component, route }">
         <template v-if="Component">
           <transition mode="out-in" name="fade">
-            <!-- <keep-alive max="10"> -->
+            <keep-alive max="10">
               <suspense :timeout="0">
                 <template #default>
-                  <component :is="Component" :key="route.fullPath" @on-error="pageStatus = false" />
+                  <component :is="Component" :key="route.name + route.fullPath" @on-error="pageStatus = false" />
                 </template>
                 <template #fallback>
                   <div class="loading w-full h-full flex flex-col justify-center items-center space-y-2">
@@ -16,7 +16,7 @@
                   </div>
                 </template>
               </suspense>
-            <!-- </keep-alive> -->
+            </keep-alive>
           </transition>
         </template>
       </router-view>
@@ -49,6 +49,7 @@
     padding: 0;
     height: 100%;
     width: 100%;
+    overflow: hidden;
   }
   * {
     scrollbar-width: none;

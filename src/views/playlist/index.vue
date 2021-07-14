@@ -1,18 +1,20 @@
 <template>
-  <div v-if="pageStatus" class="playlist-wrapper w-full h-full overflow-y-auto relative" ref="scrollBox">
+  <div
+    v-if="pageStatus"
+    class="playlist-wrapper w-full h-full overflow-y-scroll overflow-x-hidden relative"
+    ref="scrollBox"
+  >
     <header
-      class="head-menu flex text-base h-14 sticky left-0 right-0 top-0 z-20 px-2 pt-4"
-      :class="stickied ? ' bg-gray-900' : ''"
+      class="head-menu flex text-base h-14 sticky left-0 top-0 z-20 px-2 pt-4 m-0"
+      :class="stickied ? 'bg-gray-900' : ''"
     >
       <svg-icon name="back" @click="$router.go(-1)"></svg-icon>
-      <h2 class="flex-1 text-center mx-5 truncate" :style="`opacity: ${1 - rate}`">{{ playlist.name }}</h2>
+      <h2 class="flex-1 text-center mx-5 truncate opacity-0" :class="{ 'opacity-100': stickied }">
+        {{ playlist.name }}
+      </h2>
       <svg-icon name="more"></svg-icon>
     </header>
-    <figure
-      class="sticky flex flex-col items-center overflow-hidden w-full transform top-16 mt-2"
-      :style="rate > 0 ? `transform: scale(${0.4 * rate + 0.6}` : 'transform: scale(0)'"
-      id="playlist-info"
-    >
+    <figure class="sticky flex flex-col items-center overflow-hidden w-full transform top-16 mt-2" id="playlist-info">
       <img v-img="playlist.coverImgUrl" alt="封面" class="h-48 w-48 object-cover align-bottom" />
       <figcaption class="text-center w-full">
         <h1 class="text-2xl mt-2 truncate">{{ playlist.name }}</h1>
@@ -20,16 +22,13 @@
       </figcaption>
     </figure>
     <div class="w-full z-10 pt-4" id="playlist-content">
-      <div
-        class="btn-divider text-center h-6 z-30 left-0 right-0 sticky top-14"
-        :class="stickied ? 'bg-gray-900' : ' bg-gradient-to-t from-gray-900 to-transparent'"
-      >
+      <div class="btn-divider text-center h-6 sticky z-30 left-0 top-14" :class="{ 'bg-gray-900': stickied }">
         <button class="btn absolute m-auto left-0 right-0 -bottom-6 z-20 shadow-sm" type="button" @click="playAll">
           播放
         </button>
       </div>
-      <!-- <div v-show="stickied" class="h-6"></div> -->
       <div class="pt-10 relative bg-gray-900">
+        <span class="absolute -top-20 z-0" :ref="setSentinel" data-flag="PRE"></span>
         <ul class="space-y-2 pb-2" v-if="playlist.id">
           <playlist-item
             v-for="(item, index) in tracks"
@@ -39,8 +38,8 @@
           />
         </ul>
       </div>
-      <div class="my-5 w-full text-center font-normal text-sm text-gray-400" v-show="loading">
-        <span>loading...</span>
+      <div class="my-5 w-full text-center font-normal text-sm text-gray-400" v-show="more">
+        <span :ref="setSentinel" data-flag="SUF">loading...</span>
       </div>
     </div>
   </div>
@@ -49,42 +48,76 @@
 <script setup lang="ts">
   import { ref } from '@vue/reactivity';
   import PlaylistItem from '/@cp/playlist-item.vue';
-  import { computed, onBeforeUnmount, onDeactivated, onMounted } from '@vue/runtime-core';
+  import {
+    computed,
+    onActivated,
+    onBeforeUnmount,
+    onDeactivated,
+    onErrorCaptured,
+    onMounted,
+    onUnmounted,
+  } from '@vue/runtime-core';
   import { getPlaylistDetail } from '/@/api/playlist';
   import { useRoute } from 'vue-router';
   import { useStore } from '/@/store';
   import { getTrackDetail } from '/@/api/track';
   import type { Playlist, Track, TrackId } from '/@/index.d';
 
+  const store = useStore();
+  const route = useRoute();
+
   onMounted(() => {
-    if (scrollBox.value !== null) scrollBox.value.addEventListener('scroll', onScroll);
+    observeSentinel();
   });
-  onBeforeUnmount(() => {
-    if (scrollBox.value !== null) scrollBox.value.removeEventListener('scroll', onScroll);
+  onUnmounted(() => {
+    unObserveSentinel();
+  });
+  onActivated(() => {
+    observeSentinel();
   });
   onDeactivated(() => {
-    rate.value = 1;
+    unObserveSentinel();
     stickied.value = false;
+  });
+  onErrorCaptured(() => {
+    pageStatus.value = false;
   });
 
   const PAGE_SIZE = 20;
-  const store = useStore();
-
-  const player = computed(() => store.state.player);
-  const isPlayingThisList = computed(() => playlist.value.id === player.value.listId);
-  const playlistId = computed(() => Number(useRoute().params.id));
+  const scrollBox = ref<HTMLElement | null>(null);
+  const sentinel = ref<HTMLElement[]>([]);
+  const observer = new IntersectionObserver(
+    es => {
+      es.forEach(e => {
+        const flag = (e.target as HTMLElement).dataset.flag;
+        switch (flag) {
+          case 'SUF':
+            e.intersectionRatio && getMore();
+            break;
+          case 'PRE':
+            stickied.value = !e.intersectionRatio;
+            break;
+          default:
+            break;
+        }
+      });
+    },
+    {
+      root: scrollBox.value,
+    }
+  );
 
   const stickied = ref(false);
-  const rate = ref(1);
   const offset = ref(0);
-  const loading = ref(false);
   const pageStatus = ref(true);
-
-  const scrollBox = ref<HTMLElement | null>(null);
-
   const tracks = ref<Track[]>([]);
   const playlistIds = ref<TrackId[]>([]);
   const playlist = ref<Playlist>({} as Playlist);
+
+  const player = computed(() => store.state.player);
+  const isPlayingThisList = computed(() => playlist.value.id === player.value.listId);
+  const playlistId = computed(() => Number(route.params.id));
+  const more = computed(() => offset.value < playlistIds.value.length);
 
   try {
     const { data } = await getPlaylistDetail(playlistId.value);
@@ -97,7 +130,6 @@
   }
 
   async function getMore(): Promise<void> {
-    loading.value = true;
     const req_ids: string = playlistIds.value
       .slice(offset.value, offset.value + PAGE_SIZE)
       .map((t: any) => t.id)
@@ -112,8 +144,6 @@
       }
     } catch (error) {
       console.log(error);
-    } finally {
-      loading.value = false;
     }
   }
 
@@ -139,16 +169,22 @@
     }
   }
 
-  function onScroll(): void {
-    if (scrollBox.value === null) return;
-    const offsetTop = 360 - Number(scrollBox.value.scrollTop);
-    rate.value = offsetTop / 360;
-    stickied.value = offsetTop <= 70; //提前执行fixed，看起来更丝滑
-
-    // 触底加载
-    const offsetBottom = scrollBox.value.scrollHeight - scrollBox.value.scrollTop - scrollBox.value.clientHeight;
-    if (offsetBottom < 60 && !loading.value && offset.value < playlistIds.value.length) {
-      getMore();
+  function setSentinel(el: any) {
+    sentinel.value.push(el);
+  }
+  function observeSentinel(): void {
+    if (sentinel.value.length) {
+      sentinel.value.forEach(e => {
+        observer.observe(e);
+      });
+    }
+  }
+  function unObserveSentinel(): void {
+    if (sentinel.value.length) {
+      sentinel.value.forEach(e => {
+        observer.unobserve(e);
+      });
+      observer.disconnect();
     }
   }
 </script>
@@ -161,5 +197,8 @@
   }
   .playlist-wrapper {
     @apply bg-gradient-to-b from-red-500 via-gray-900 to-gray-900;
+  }
+  .btn-divider {
+    margin-top: -1px;
   }
 </style>

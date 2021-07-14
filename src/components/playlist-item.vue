@@ -1,10 +1,6 @@
 <template>
-  <li class="flex flex-row mx-2 space-x-3 items-center overflow-hidden">
-    <img
-      v-img="track.al.picUrl ? track.al.picUrl : '/default-music.jpg'"
-      class="w-14 h-14 flex-none object-cover"
-      alt="歌曲封面"
-    />
+  <li class="playlist-item__wrapper flex flex-row mx-2 space-x-3 items-center overflow-hidden">
+    <img v-img.lazy="track.al.picUrl" class="w-14 h-14 flex-none object-cover" alt="歌曲封面" />
     <div class="flex-1 overflow-hidden" @click="playable && $emit('on-play')">
       <p class="text-base font-medium truncate w-full" :class="{ 'text-gray-500': !playable }">
         {{ track.name }}
@@ -21,7 +17,7 @@
   </li>
 </template>
 <script setup lang="ts">
-  import { defineEmits, defineProps } from '@vue/runtime-core';
+  import { defineEmits, defineProps, onMounted, onUnmounted, ref } from '@vue/runtime-core';
   import type { Track } from '/@/index.d';
 
   defineEmits(['on-play']);

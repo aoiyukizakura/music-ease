@@ -12,7 +12,7 @@
           name="logout"
         ></svg-icon>
       </header>
-      <ul class="flex-1 overflow-y-auto mt-20 flex flex-wrap px-2 py-4 justify-center">
+      <ul class="flex-1 overflow-y-auto mt-20 flex flex-wrap px-2 py-4 justify-center" v-if="userinfo.userId">
         <cover
           class="mt-3 mx-3"
           v-for="(p, i) in playlist"
@@ -21,6 +21,7 @@
           :pic-url="p.coverImgUrl"
           :id="p.id"
         ></cover>
+        <li ref="trigger">loading...</li>
       </ul>
     </template>
     <div class="text-center h-full flex flex-col space-y-3 justify-center" v-else>
@@ -30,7 +31,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, onActivated, ref } from 'vue';
+  import { computed, onActivated, onMounted, onUnmounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { LOGIN_TYPE } from '/@/index.d';
   import type { Playlist } from '/@/index.d';
@@ -45,22 +46,27 @@
   const router = useRouter();
   const route = useRoute();
 
-  const userinfo = computed(() => store.state.userInfo);
-
   const loading = ref(false);
   const pageStatus = ref(true);
   const playlist = ref<Playlist[]>([]);
   const offset = ref(1);
+  const trigger = ref<HTMLElement | null>(null);
 
+  const userinfo = computed(() => store.state.userInfo);
+
+  const observer = new IntersectionObserver((e, t) => e[0].isIntersecting && getUserData());
+
+  onMounted(() => {
+    trigger.value && observer.observe(trigger.value);
+  });
+  onUnmounted(() => {
+    observer.disconnect();
+  });
   onActivated(() => {
     if (userinfo.value.userId && route.query.refresh) {
       getUserData();
     }
   });
-
-  if (userinfo.value.userId) {
-    getUserData();
-  }
   async function getUserData(): Promise<void> {
     loading.value = true;
     try {
@@ -69,7 +75,7 @@
         limit: PAGE_SIZE,
         offset: offset.value,
       });
-      playlist.value = data.playlist;
+      playlist.value = playlist.value.concat(data.playlist);
       offset.value += PAGE_SIZE;
     } catch (error) {
       console.log(error);

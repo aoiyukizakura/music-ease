@@ -10,7 +10,8 @@
   .loading span {
     display: inline-block;
     height: 100%;
-    border: 2px #fff solid;
+    padding: 2px;
+    background-color: #fff;
     -webkit-animation: rotation 1s ease-in-out infinite;
     -moz-animation: rotation 1s ease-in-out infinite;
     animation: rotation 1s ease-in-out infinite;
