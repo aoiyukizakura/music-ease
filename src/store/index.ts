@@ -4,21 +4,23 @@ import { createStore, Store, useStore as baseUseStore } from "vuex"
 import { mutations } from './mutations'
 import Player from '../utils/player';
 import { InjectionKey } from "vue";
-import { ISearchUser } from "../index.d";
+import { UserProfile, Playlist } from "/@/index.d";
 
-export interface IUserInfo extends ISearchUser {
+export interface IUserInfo extends UserProfile {
   [k: string]: any
 }
 export interface State {
   player: Player,
-  userInfo: IUserInfo
+  userInfo: IUserInfo,
+  favPlaylist: Playlist
 }
 
 export const key: InjectionKey<Store<State>> = Symbol()
 
 export const state: State = {
   player: Player.getPlayer(),
-  userInfo: JSON.parse(localStorage.getItem('userInfo') || '{}') as IUserInfo
+  userInfo: JSON.parse(localStorage.getItem('userInfo') || '{}') as IUserInfo,
+  favPlaylist: JSON.parse(localStorage.getItem('favPlaylist') || '{}') as Playlist,
 }
 
 export const store = createStore<State>({

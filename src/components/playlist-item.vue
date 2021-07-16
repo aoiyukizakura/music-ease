@@ -1,6 +1,6 @@
 <template>
   <li class="playlist-item__wrapper flex flex-row mx-2 space-x-3 items-center overflow-hidden">
-    <img v-img.lazy="track.al.picUrl" class="w-14 h-14 flex-none object-cover" alt="歌曲封面" />
+    <img v-img.lazy="track.al.picUrl + '?param=56y56'" class="w-14 h-14 flex-none object-cover" alt="歌曲封面" />
     <div class="flex-1 overflow-hidden" @click="playable && $emit('on-play')">
       <p class="text-base font-medium truncate w-full" :class="{ 'text-gray-500': !playable }">
         {{ track.name }}

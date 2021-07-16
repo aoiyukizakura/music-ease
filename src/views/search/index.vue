@@ -31,7 +31,7 @@
 </template>
 <script setup lang="ts">
   import { computed, onMounted, ref } from 'vue';
-  import type { ISearchUser, Track } from '/@/index.d';
+  import type { UserProfile, Track } from '/@/index.d';
   import { search } from '/@/api/others';
   import { getTrackDetail } from '/@/api/track';
   import { useStore } from '/@/store';
@@ -48,7 +48,7 @@
   const loading = ref(false);
 
   const songs = ref<Track[]>([]);
-  const users = ref<ISearchUser[]>([]);
+  const users = ref<UserProfile[]>([]);
 
   async function onSearch(loadmore: boolean = false) {
     try {

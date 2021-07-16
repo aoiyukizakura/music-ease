@@ -2,17 +2,11 @@
   <div v-if="pageStatus" class="h-full relativeflex flex-col flex">
     <template v-if="userinfo.userId">
       <header class="bg-gray-800 shadow-lg py-4 px-2 absolute top-0 w-full flex self-start items-center space-x-3">
-        <img v-img="userinfo.avatarUrl" alt="头像" class="h-12 w-12 rounded-full relative z-10" />
+        <img v-img="userinfo.avatarUrl + '?param=56y56'" alt="头像" class="h-12 w-12 rounded-full relative z-10" />
         <h2 class="flex-1">{{ userinfo.nickname }}的歌单</h2>
-        <svg-icon
-          @click="
-            store.commit('UPDATE_USERINFO', '{}');
-            router.replace('/library');
-          "
-          name="logout"
-        ></svg-icon>
+        <svg-icon @click="exit" name="logout"></svg-icon>
       </header>
-      <ul class="flex-1 overflow-y-auto mt-20 flex flex-wrap px-2 py-4 justify-center" v-if="userinfo.userId">
+      <ul class="flex-1 overflow-y-auto mt-20 flex flex-wrap px-2 py-4 justify-center">
         <cover
           class="mt-3 mx-3"
           v-for="(p, i) in playlist"
@@ -20,8 +14,10 @@
           :name="p.name"
           :pic-url="p.coverImgUrl"
           :id="p.id"
-        ></cover>
-        <li ref="trigger">loading...</li>
+        />
+        <li ref="trigger" v-if="more">
+          <!-- <loading /> -->
+        </li>
       </ul>
     </template>
     <div class="text-center h-full flex flex-col space-y-3 justify-center" v-else>
@@ -39,6 +35,8 @@
   import SvgIcon from '/@/components/svg-icon.vue';
   import Cover from '/@/components/cover.vue';
   import { userPlaylist } from '/@/api/user';
+  import Loading from '/@/components/loading.vue';
+  import { logout } from '/@/api/auth';
 
   const PAGE_SIZE = 10;
 
@@ -47,9 +45,10 @@
   const route = useRoute();
 
   const loading = ref(false);
+  const more = ref(true);
   const pageStatus = ref(true);
   const playlist = ref<Playlist[]>([]);
-  const offset = ref(1);
+  const offset = ref(0);
   const trigger = ref<HTMLElement | null>(null);
 
   const userinfo = computed(() => store.state.userInfo);
@@ -67,6 +66,11 @@
       getUserData();
     }
   });
+  await new Promise<void>((res, rej) => {
+    setTimeout(() => {
+      res();
+    }, 1000);
+  });
   async function getUserData(): Promise<void> {
     loading.value = true;
     try {
@@ -75,6 +79,7 @@
         limit: PAGE_SIZE,
         offset: offset.value,
       });
+      more.value = data.more;
       playlist.value = playlist.value.concat(data.playlist);
       offset.value += PAGE_SIZE;
     } catch (error) {
@@ -83,6 +88,12 @@
     } finally {
       loading.value = false;
     }
+  }
+
+  async function exit() {
+    await logout();
+    store.commit('UPDATE_USERINFO', '{}');
+    router.replace('/library');
   }
 </script>
 

@@ -1,10 +1,12 @@
 <template>
+  <slot name="top"></slot>
   <div class="loading space-x-1 h-6">
     <span></span>
     <span></span>
     <span></span>
     <span></span>
   </div>
+  <slot></slot>
 </template>
 <style lang="postcss" scoped>
   .loading span {

@@ -1,7 +1,7 @@
 <template>
-  <router-link :to="`/playlist/${id}`" class="w-36 block">
-    <img class="h-36 w-full object-cover origin-top-left" v-img="picUrl" alt="封面" />
-    <p class="dark:text-gray-400 overflow-elision-2 text-sm mt-1">{{ name }}</p>
+  <router-link :to="`/playlist/${id}`" class="min-w-max inline-block overflow-hidden">
+    <img class="h-36 w-36 object-cover" v-img="picUrl + '?param=144y144'" alt="封面" />
+    <p class="dark:text-gray-400 w-36 overflow-elision-2 text-sm mt-1">{{ name }}</p>
   </router-link>
 </template>
 <script setup lang="ts">

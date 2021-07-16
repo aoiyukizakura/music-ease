@@ -14,9 +14,9 @@ const service = axios.create({
 
 service.interceptors.request.use(config => {
   if (!config.params) config.params = {};
-  if (Cookies.get('MUSIC_U')) {
-    config.params.cookies = `MUSIC_U=${Cookies.get('MUSIC_U')}`
-  }
+  // if (Cookies.get('MUSIC_U')) {
+  //   config.params.cookies = `MUSIC_U=${Cookies.get('MUSIC_U')}`
+  // }
   return config
 })
 

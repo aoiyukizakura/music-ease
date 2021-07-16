@@ -15,7 +15,7 @@
       <svg-icon name="more"></svg-icon>
     </header>
     <figure class="sticky flex flex-col items-center overflow-hidden w-full transform top-16 mt-2" id="playlist-info">
-      <img v-img="playlist.coverImgUrl" alt="封面" class="h-48 w-48 object-cover align-bottom" />
+      <img v-img="playlist.coverImgUrl + '?param=200y200'" alt="封面" class="h-48 w-48 object-cover align-bottom" />
       <figcaption class="text-center w-full">
         <h1 class="text-2xl mt-2 truncate">{{ playlist.name }}</h1>
         <p class="text-sm font-light mt-1 overflow-elision-2">{{ playlist.description }}</p>
@@ -89,7 +89,7 @@
   const observer = new IntersectionObserver(
     es => {
       es.forEach(e => {
-        const flag = (e.target as HTMLElement).dataset.flag;
+        const flag = e.target.getAttribute('data-flag');
         switch (flag) {
           case 'SUF':
             e.intersectionRatio && getMore();
@@ -113,6 +113,7 @@
   const tracks = ref<Track[]>([]);
   const playlistIds = ref<TrackId[]>([]);
   const playlist = ref<Playlist>({} as Playlist);
+  const buffer = ref(30);
 
   const player = computed(() => store.state.player);
   const isPlayingThisList = computed(() => playlist.value.id === player.value.listId);
@@ -120,11 +121,11 @@
   const more = computed(() => offset.value < playlistIds.value.length);
 
   try {
-    const { data } = await getPlaylistDetail(playlistId.value);
-    playlist.value = data.playlist;
-    playlistIds.value = playlist.value.trackIds;
-    tracks.value = tracks.value.concat(playlist.value.tracks);
-    offset.value = tracks.value.length;
+    // const { data } = await getPlaylistDetail(playlistId.value);
+    // playlist.value = data.playlist;
+    // playlistIds.value = playlist.value.trackIds;
+    // tracks.value = tracks.value.concat(playlist.value.tracks);
+    // offset.value = tracks.value.length;
   } catch (error) {
     pageStatus.value = false;
   }

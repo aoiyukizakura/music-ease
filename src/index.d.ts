@@ -349,49 +349,12 @@ export interface SearchResult {
   hasMore: boolean;
   songCount?: number;
   userprofileCount?: number
-  userprofiles?: ISearchUser[]
+  userprofiles?: UserProfile[]
 }
-
 export interface Search {
   result: SearchResult;
   code: number;
 }
-export interface ISearchUser {
-  defaultAvatar: boolean;
-  province: number;
-  authStatus: number;
-  followed: boolean;
-  avatarUrl: string;
-  accountStatus: number;
-  gender: number;
-  city: number;
-  birthday: number;
-  userId: number;
-  userType: number;
-  nickname: string;
-  signature: string;
-  description: string;
-  detailDescription: string;
-  avatarImgId: number;
-  backgroundImgId: number;
-  backgroundUrl: string;
-  authority: number;
-  mutual: boolean;
-  expertTags?: any;
-  experts?: any;
-  djStatus: number;
-  vipType: number;
-  remarkName?: any;
-  authenticationTypes: number;
-  avatarDetail?: any;
-  avatarImgIdStr: string;
-  backgroundImgIdStr: string;
-  anchor: boolean;
-  avatarImgId_str: string;
-  alg: string;
-}
-
-
 //登录类型
 export enum LOGIN_TYPE {
   ACCOUNT,
@@ -477,10 +440,86 @@ export interface UserPlayList {
   playlist: Playlist[];
   code: number;
 }
-
 //歌曲详情
 export interface TrackDetail {
   songs: Track[];
   privileges: Privilege[];
   code: number;
+}
+//登录
+export interface Account {
+  id: number;
+  userName: string;
+  type: number;
+  status: number;
+  whitelistAuthority: number;
+  createTime: number;
+  salt: string;
+  tokenVersion: number;
+  ban: number;
+  baoyueVersion: number;
+  donateVersion: number;
+  vipType: number;
+  viptypeVersion: number;
+  anonimousUser: boolean;
+}
+export interface Expert { }
+export interface UserProfile {
+  defaultAvatar: boolean;
+  province: number;
+  authStatus: number;
+  followed: boolean;
+  avatarUrl: string;
+  accountStatus: number;
+  gender: number;
+  city: number;
+  birthday: number;
+  userId: number;
+  userType: number;
+  nickname: string;
+  signature: string;
+  description: string;
+  detailDescription: string;
+  avatarImgId: number;
+  backgroundImgId: number;
+  backgroundUrl: string;
+  authority: number;
+  mutual: boolean;
+  expertTags?: any;
+  experts?: Expert;
+  djStatus: number;
+  vipType: number;
+  remarkName?: any;
+  authenticationTypes: number;
+  avatarDetail?: any;
+  avatarImgIdStr: string;
+  backgroundImgIdStr: string;
+  anchor?: boolean;
+  avatarImgId_str?: string;
+  alg?: string;
+  followeds?: number;
+  follows?: number;
+  eventCount?: number;
+  playlistCount?: number;
+  playlistBeSubscribedCount?: number;
+}
+export interface Binding {
+  refreshTime: number;
+  url: string;
+  userId: number;
+  tokenJsonStr: string;
+  bindingTime: number;
+  expiresIn: number;
+  expired: boolean;
+  id: number;
+  type: number;
+}
+export interface LoginResponse {
+  loginType: number;
+  code: number;
+  account: Account;
+  token: string;
+  profile: UserProfile;
+  bindings: Binding[];
+  cookie: string;
 }
