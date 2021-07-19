@@ -92,7 +92,14 @@
         const flag = e.target.getAttribute('data-flag');
         switch (flag) {
           case 'SUF':
-            e.intersectionRatio && getMore();
+            if (e.intersectionRatio) {
+              if (bufferList.value.length) {
+                // 缓冲区中的数据还未读取完成
+                tracks.value = tracks.value.concat(bufferList.value.splice(0, 20));
+              } else {
+                getMore();
+              }
+            }
             break;
           case 'PRE':
             stickied.value = !e.intersectionRatio;
@@ -113,7 +120,7 @@
   const tracks = ref<Track[]>([]);
   const playlistIds = ref<TrackId[]>([]);
   const playlist = ref<Playlist>({} as Playlist);
-  const buffer = ref(30);
+  const bufferList = ref<Track[]>([]);
 
   const player = computed(() => store.state.player);
   const isPlayingThisList = computed(() => playlist.value.id === player.value.listId);
@@ -121,11 +128,16 @@
   const more = computed(() => offset.value < playlistIds.value.length);
 
   try {
-    // const { data } = await getPlaylistDetail(playlistId.value);
-    // playlist.value = data.playlist;
-    // playlistIds.value = playlist.value.trackIds;
-    // tracks.value = tracks.value.concat(playlist.value.tracks);
-    // offset.value = tracks.value.length;
+    const { data } = await getPlaylistDetail(playlistId.value);
+    playlist.value = data.playlist;
+    playlistIds.value = playlist.value.trackIds;
+    bufferList.value = tracks.value.concat(playlist.value.tracks);
+    if (bufferList.value.length > 10) {
+      tracks.value = bufferList.value.splice(0, 10);
+    } else {
+      tracks.value = bufferList.value;
+    }
+    offset.value = bufferList.value.length;
   } catch (error) {
     pageStatus.value = false;
   }
