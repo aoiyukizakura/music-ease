@@ -29,7 +29,7 @@
       </div>
       <div class="pt-10 relative bg-gray-900">
         <span class="absolute -top-20 z-0" :ref="setSentinel" data-flag="PRE"></span>
-        <ul class="space-y-2 pb-2" v-if="playlist.id">
+        <ul class="space-y-2 pb-2">
           <playlist-item
             v-for="(item, index) in tracks"
             :track="item"
@@ -57,7 +57,7 @@
     onMounted,
     onUnmounted,
   } from '@vue/runtime-core';
-  import { getPlaylistDetail } from '/@/api/playlist';
+  import { dailyRecommendTracks, getPlaylistDetail } from '/@/api/playlist';
   import { useRoute } from 'vue-router';
   import { useStore } from '/@/store';
   import { getTrackDetail } from '/@/api/track';
@@ -128,16 +128,26 @@
   const more = computed(() => offset.value < playlistIds.value.length);
 
   try {
-    const { data } = await getPlaylistDetail(playlistId.value);
-    playlist.value = data.playlist;
-    playlistIds.value = playlist.value.trackIds;
-    bufferList.value = tracks.value.concat(playlist.value.tracks);
-    if (bufferList.value.length > 10) {
-      tracks.value = bufferList.value.splice(0, 10);
+    if (playlistId.value) {
+      const { data } = await getPlaylistDetail(playlistId.value);
+      playlist.value = data.playlist;
+      playlistIds.value = playlist.value.trackIds;
+      bufferList.value = tracks.value.concat(playlist.value.tracks);
+      offset.value = bufferList.value.length;
+      if (bufferList.value.length > 10) {
+        tracks.value = bufferList.value.splice(0, 10);
+      } else {
+        tracks.value = bufferList.value;
+      }
     } else {
-      tracks.value = bufferList.value;
+      const { data } = await dailyRecommendTracks();
+      playlist.value = {
+        id: 0,
+        name: '每日推荐',
+        description: `${store.state.userInfo.nickname}的每日专属歌单`,
+      } as Playlist;
+      tracks.value = data.data.dailySongs;
     }
-    offset.value = bufferList.value.length;
   } catch (error) {
     pageStatus.value = false;
   }
@@ -162,7 +172,6 @@
 
   function playAll(): void {
     loadThisPlaylist();
-    player.value.current = 0;
     player.value._playTrack();
   }
 
@@ -177,6 +186,8 @@
     if (listId === playlist.value.id) {
       return;
     } else {
+      // 把已经获取到详情的歌曲数据，放入到播放器中。
+      player.value.trackList = bufferList.value.concat(tracks.value);
       player.value.list = playlistIds.value;
       player.value.listId = playlist.value.id;
     }

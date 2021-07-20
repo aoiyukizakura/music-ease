@@ -357,8 +357,8 @@ export interface Search {
 }
 //登录类型
 export enum LOGIN_TYPE {
-  ACCOUNT,
   USERNAME,
+  ACCOUNT,
 }
 
 export interface AvatarDetail {
@@ -522,4 +522,41 @@ export interface LoginResponse {
   profile: UserProfile;
   bindings: Binding[];
   cookie: string;
+}
+// 每日推荐
+export interface Recommend {
+  id: number;
+  type: number;
+  name: string;
+  copywriter: string;
+  picUrl: string;
+  playcount: number;
+  createTime: number;
+  creator: Creator;
+  trackCount: number;
+  userId: number;
+  alg: string;
+}
+
+export interface DailyRecommendResponse {
+  code: number;
+  featureFirst: boolean;
+  haveRcmdSongs: boolean;
+  recommend: Recommend[];
+}
+
+export interface RecommendReason {
+  songId: number;
+  reason: string;
+}
+
+export interface RecommendData {
+  dailySongs: Track[];
+  orderSongs: any[];
+  recommendReasons: RecommendReason[];
+}
+
+export interface RecommendSongResponse {
+  code: number;
+  data: RecommendData;
 }

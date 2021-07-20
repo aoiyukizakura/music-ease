@@ -77,15 +77,22 @@
   const pwd = ref('');
   const userProfiles = ref<UserProfile[]>([]);
 
+  const loginType = ref<LOGIN_TYPE | -1>(-1);
+
+  if (store.state.loginType !== -1) {
+    router.replace('/libary?refresh=1');
+  }
+
   function updateState(): void {
     if (!userProfiles.value.length) return;
     store.commit('UPDATE_USERINFO', userProfiles.value[index.value]);
-    console.log(store.state.userInfo);
+    store.commit('UPDATE_LOGINTYPE', loginType.value);
     router.replace('/library?refresh=1');
   }
 
   async function doLogin() {
-    if(!account.value&&!pwd.value) return;
+    if (!account.value && !pwd.value) return;
+    loginType.value = LOGIN_TYPE.ACCOUNT;
     const cellphone_reg =
       /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[189]))\d{8}$/;
     const email_reg =
@@ -126,6 +133,7 @@
       console.log(e);
     } finally {
       loading.value = false;
+      loginType.value = LOGIN_TYPE.USERNAME;
     }
   }
 </script>

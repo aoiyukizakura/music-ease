@@ -49,12 +49,11 @@ const router: Router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  next()
-  // if (!localStorage.getItem("userInfo") && to.meta.requireLogin) {
-  //   next('/login')
-  // } else {
-  //   next()
-  // }
+  if (!localStorage.getItem("userInfo") && to.meta.requireLogin) {
+    next('/login')
+  } else {
+    next()
+  }
 })
 
 export default router

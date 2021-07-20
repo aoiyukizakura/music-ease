@@ -9,7 +9,8 @@ export default class Player {
   private _volume: number; // 0 to 1
   private _volumeBeforeMuted: number; // 用于保存静音前的音量
 
-  private _list: TrackId[] | Track[];// 播放列表
+  private _list: TrackId[];// 播放列表
+  private _trackList: Track[];
   private _listId: number | null;
   private _current: number; // 当前播放歌曲在播放列表里的index
   private _currentTrack: Track | null; // 当前播放歌曲的详细信息
@@ -25,6 +26,7 @@ export default class Player {
     this._volume = 1;
     this._volumeBeforeMuted = 1;
     this._list = list || [];
+    this._trackList = [];
     this._listId = null;
     this._current = index || 0;
     this._currentTrack = null;
@@ -45,11 +47,10 @@ export default class Player {
   async _playTrack(index: number = 0, track?: Track): Promise<void> {
     this.current = index;
     if (track) {
-      this.list = [track];
       this.currentTrack = track;
     } else {
-      const currentTrackId = this.list[index]?.id
-      const trackData = (await getTrackDetail(currentTrackId)).data.songs[0];
+      const currentTrack = this.trackList[index];
+      const trackData = currentTrack ? currentTrack : (await getTrackDetail(this.list[index].id)).data.songs[0];
       if (trackData.fee !== 0 && (!trackData.fee || trackData.fee === 1 || trackData.fee === 4)) {
         this._playNext()
         return;
@@ -157,10 +158,10 @@ export default class Player {
   public set volumeBeforeMuted(v: number) {
     this._volumeBeforeMuted = v;
   }
-  public get list(): TrackId[] | Track[] {
+  public get list(): TrackId[] {
     return this._list;
   }
-  public set list(v: TrackId[] | Track[]) {
+  public set list(v: TrackId[]) {
     this._list = v;
   }
   public get listId(): number | null {
@@ -186,6 +187,12 @@ export default class Player {
   }
   public set howl(v: Howl | null) {
     this._howl = v;
+  }
+  public get trackList(): Track[] {
+    return this._trackList;
+  }
+  public set trackList(v: Track[]) {
+    this._trackList = v;
   }
   public get total(): number {
     return this.list.length

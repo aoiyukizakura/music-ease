@@ -16,7 +16,7 @@
           :id="p.id"
         />
         <li ref="trigger" v-if="more">
-          <!-- <loading /> -->
+          <loading />
         </li>
       </ul>
     </template>
@@ -36,7 +36,6 @@
   import Cover from '/@/components/cover.vue';
   import { userPlaylist } from '/@/api/user';
   import Loading from '/@/components/loading.vue';
-  import { logout } from '/@/api/auth';
 
   const PAGE_SIZE = 10;
 
@@ -91,8 +90,7 @@
   }
 
   async function exit() {
-    await logout();
-    store.commit('UPDATE_USERINFO', '{}');
+    await store.dispatch('logout');
     router.replace('/library');
   }
 </script>

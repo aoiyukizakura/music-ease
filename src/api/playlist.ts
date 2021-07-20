@@ -1,7 +1,6 @@
 import { AxiosPromise } from 'axios';
-import { IHighQualityPlaylistParam, IRankListData, ITopPlaylistData } from '/@/index.d';
+import { DailyRecommendResponse, IHighQualityPlaylistParam, IRankListData, ITopPlaylistData, IRecommendPlaylist, IPlaylistDetailData, RecommendSongResponse } from '/@/index.d';
 import request from '/@/utils/request';
-import { IRecommendPlaylist, IPlaylistDetailData } from '../index';
 
 export interface IRecommendPlaylistData {
   category: number
@@ -34,11 +33,7 @@ export function recommendPlaylist<T = IRecommendPlaylistData>(params: {
  * @param {Object} params
  * @param {number=} params.limit
  */
-export function dailyRecommendPlaylist(params: {
-  timestamp?: number,
-  limit?: number,
-  [key: string]: any
-}) {
+export function dailyRecommendPlaylist(params: { timestamp?: number, limit?: number }): AxiosPromise<DailyRecommendResponse> {
   return request({
     url: '/recommend/resource',
     method: 'get',
@@ -211,7 +206,7 @@ export function addOrRemoveTrackFromPlaylist(params: {
  * @param {string} params.op
  * @param {string} params.pid
  */
-export function dailyRecommendTracks() {
+export function dailyRecommendTracks():AxiosPromise<RecommendSongResponse> {
   return request({
     url: '/recommend/songs',
     method: 'get'
