@@ -35,6 +35,7 @@
             :track="item"
             :is-playing="isPlayingThisList && item.id === player?.currentTrack?.id"
             @on-play="onPlay(index)"
+            @on-menu="onMenu(item.id)"
           />
         </ul>
       </div>
@@ -125,7 +126,7 @@
   const player = computed(() => store.state.player);
   const isPlayingThisList = computed(() => playlist.value.id === player.value.listId);
   const playlistId = computed(() => Number(route.params.id));
-  const more = computed(() => offset.value < playlistIds.value.length);
+  const more = computed(() => bufferList.value.length || offset.value < playlistIds.value.length);
 
   try {
     if (playlistId.value) {
@@ -141,12 +142,13 @@
       }
     } else {
       const { data } = await dailyRecommendTracks();
+      tracks.value = data.data.dailySongs;
       playlist.value = {
         id: 0,
         name: '每日推荐',
-        description: `${store.state.userInfo.nickname}的每日专属歌单`,
+        description: `${store.state.userInfo.nickname}的每日专属推荐歌曲`,
+        coverImgUrl: tracks.value[0].al.picUrl,
       } as Playlist;
-      tracks.value = data.data.dailySongs;
     }
   } catch (error) {
     pageStatus.value = false;
@@ -187,7 +189,7 @@
       return;
     } else {
       // 把已经获取到详情的歌曲数据，放入到播放器中。
-      player.value.trackList = bufferList.value.concat(tracks.value);
+      player.value.trackList = tracks.value.concat(bufferList.value);
       player.value.list = playlistIds.value;
       player.value.listId = playlist.value.id;
     }
@@ -211,6 +213,7 @@
       observer.disconnect();
     }
   }
+  function onMenu(id: number): void {}
 </script>
 <style lang="postcss">
   .btn {

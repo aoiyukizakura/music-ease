@@ -1,7 +1,6 @@
 import request from '/@/utils/request';
 import { AxiosPromise } from 'axios';
-import { UserPlayList } from '/@/index.d';
-
+import { UserPlayList, LikeList } from '/@/index.d';
 /**
  * 获取用户详情
  * 说明 : 登录后调用此接口 , 传入用户 id, 可以获取用户详情
@@ -58,7 +57,7 @@ export function userPlaylist(params: { uid: number, limit: number, offset: numbe
  * - uid: 用户 id
  * @param {number} uid
  */
-export function userLikedSongsIDs(uid: number) {
+export function userLikedSongsIDs(uid: number): AxiosPromise<LikeList> {
   return request({
     url: '/likelist',
     method: 'get',
@@ -95,13 +94,15 @@ export function dailySignin(type: number = 0) {
  * @param {number} params.limit
  * @param {number=} params.offset
  */
-export function likedAlbums(params: { offset: number, limit: number }) {
+export function likedAlbums(params: {
+  offset: number, limit: number, timestamp?: number,
+}) {
   return request({
     url: '/album/sublist',
     method: 'get',
     params: {
       limit: params.limit,
-      timestamp: new Date().getTime(),
+      timestamp: params.timestamp,
     },
   });
 }
@@ -120,7 +121,7 @@ export function likedArtists(params: {
     method: 'get',
     params: {
       limit: params.limit,
-      timestamp: new Date().getTime(),
+      timestamp: params.timestamp,
     },
   });
 }
@@ -139,7 +140,7 @@ export function likedMVs(params: {
     method: 'get',
     params: {
       limit: params.limit,
-      timestamp: new Date().getTime(),
+      timestamp: params.timestamp,
     },
   });
 }

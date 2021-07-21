@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import { production_url } from './config.spec';
 
 const baseURL =
@@ -14,9 +13,6 @@ const service = axios.create({
 
 service.interceptors.request.use(config => {
   if (!config.params) config.params = {};
-  // if (Cookies.get('MUSIC_U')) {
-  //   config.params.cookies = `MUSIC_U=${Cookies.get('MUSIC_U')}`
-  // }
   return config
 })
 

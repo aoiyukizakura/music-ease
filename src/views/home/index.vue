@@ -1,7 +1,7 @@
 <template>
   <div class="home-wrapper h-full overflow-y-auto py-4 px-2">
     <div
-      v-if="loginType"
+      v-if="loginType===1"
       class="h-1/6 w-full from-red-400 via-red-600 to-red-400 bg-gradient-to-bl mb-2 flex justify-center items-center font-bold text-2xl"
       @click="router.push('/playlist/0')"
     >

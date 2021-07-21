@@ -13,14 +13,14 @@
       </span>
     </div>
     <svg-icon v-show="isPlaying" name="sounds" />
-    <svg-icon name="more">菜单</svg-icon>
+    <svg-icon name="more" @click="$emit('on-menu')">菜单</svg-icon>
   </li>
 </template>
 <script setup lang="ts">
   import { defineEmits, defineProps, onMounted, onUnmounted, ref } from '@vue/runtime-core';
   import type { Track } from '/@/index.d';
 
-  defineEmits(['on-play']);
+  defineEmits(['on-play', 'on-menu']);
   const props = defineProps<{
     track: Track;
     isPlaying?: boolean;

@@ -560,3 +560,8 @@ export interface RecommendSongResponse {
   code: number;
   data: RecommendData;
 }
+export interface LikeList {
+  ids: number[];
+  checkPoint: number;
+  code: number;
+}

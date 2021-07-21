@@ -14,9 +14,7 @@ const routes: RouteRecordRaw[] = [
     path: '/library',
     name: 'library',
     component: () => import('/@views/library/index.vue'),
-    meta: {
-      requireLogin: true
-    }
+    meta: {}
   },
   {
     path: '/search',
@@ -45,14 +43,6 @@ const router: Router = createRouter({
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) return savedPosition
-  }
-})
-
-router.beforeEach((to, from, next) => {
-  if (!localStorage.getItem("userInfo") && to.meta.requireLogin) {
-    next('/login')
-  } else {
-    next()
   }
 })
 

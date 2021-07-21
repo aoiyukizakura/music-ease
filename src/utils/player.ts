@@ -16,7 +16,7 @@ export default class Player {
   private _currentTrack: Track | null; // 当前播放歌曲的详细信息
 
   private _howl: Howl | null;
-  private AF: number;
+  private _AF: number;
   private _visible: boolean;
 
 
@@ -31,7 +31,7 @@ export default class Player {
     this._current = index || 0;
     this._currentTrack = null;
     this._howl = null;
-    this.AF = 0;
+    this._AF = 0;
     this._visible = true;
 
     Howler.volume(this.volume);
@@ -48,6 +48,7 @@ export default class Player {
     this.current = index;
     if (track) {
       this.currentTrack = track;
+      this.trackList = [track]
     } else {
       const currentTrack = this.trackList[index];
       const trackData = currentTrack ? currentTrack : (await getTrackDetail(this.list[index].id)).data.songs[0];
@@ -89,18 +90,18 @@ export default class Player {
     this.howl.play()
   }
   _playNext(): void {
-    if (this.current >= this.list.length - 1) {
+    // 循环模式
+    this.current++
+    if (!this.trackList[this.current] && this.current >= this.list.length - 1) {
       this.current = 0;
-    } else {
-      this.current++
     }
     this._playTrack(this.current)
   }
   _playPrev(): void {
-    if (this.current <= 0) {
+    // 循环模式
+    this.current--
+    if (!this.trackList[this.current] && this.current <= 0) {
       this.current = this.total - 1;
-    } else {
-      this.current--
     }
     this._playTrack(this.current)
   }
@@ -128,10 +129,10 @@ export default class Player {
     if (typeof seek === "number") {
       this.progress = seek / (this.currentTrack.dt / 1000);
     }
-    this.AF = requestAnimationFrame(this._step.bind(this));
+    this._AF = requestAnimationFrame(this._step.bind(this));
   }
   _cancelStep(): void {
-    cancelAnimationFrame(this.AF)
+    cancelAnimationFrame(this._AF)
   }
   public get playing(): boolean {
     return this._playing;
@@ -195,7 +196,7 @@ export default class Player {
     this._trackList = v;
   }
   public get total(): number {
-    return this.list.length
+    return this.list.length || this.trackList.length
   }
   public get music_url(): string {
     return `https://music.163.com/song/media/outer/url?id=${this.currentTrack?.id}.mp3`;

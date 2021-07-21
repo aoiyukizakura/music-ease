@@ -61,14 +61,9 @@
     observer.disconnect();
   });
   onActivated(() => {
-    if (userinfo.value.userId && route.query.refresh) {
+    if (route.query.refresh && userinfo.value.userId) {
       getUserData();
     }
-  });
-  await new Promise<void>((res, rej) => {
-    setTimeout(() => {
-      res();
-    }, 1000);
   });
   async function getUserData(): Promise<void> {
     loading.value = true;

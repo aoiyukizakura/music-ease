@@ -45,7 +45,8 @@
       <span v-else class="text-gray-500 font-medium text-sm">播放列表为空...</span>
     </div>
     <div class="controls flex">
-      <svg-icon name="like" class="mr-2"></svg-icon>
+      <svg-icon v-if="likelist.includes(player.currentTrack?.id || -1)" name="liked" class="mr-2"></svg-icon>
+      <svg-icon v-else name="like" class="mr-2"></svg-icon>
       <svg-icon name="pause" v-show="player.playing" class="mr-2" @click="player._pause()"></svg-icon>
       <svg-icon name="play" v-show="!player.playing" class="mr-2" @click="player._play()"></svg-icon>
     </div>
@@ -62,6 +63,8 @@
   const scrollContent = ref<HTMLElement | null>(null);
 
   const player = computed(() => useStore().state.player);
+  const likelist = computed(() => useStore().state.favPlaylist);
+
   function change($e: any) {
     player.value._seek(Number($e.target.value));
     player.value._play();

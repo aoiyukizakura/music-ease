@@ -55,7 +55,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, reactive, ref } from 'vue';
+  import { computed, onBeforeMount, reactive, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { search } from '/@/api/others';
   import { LOGIN_TYPE } from '/@/index.d';
@@ -63,6 +63,11 @@
   import { useStore } from '/@/store';
   import { loginWithEmail, loginWithPhone } from '/@/api/auth';
 
+  onBeforeMount(() => {
+    if (store.state.loginType && store.state.loginType !== -1) {
+      router.replace('/');
+    }
+  });
   const PAGE_SIZE = 10;
   const store = useStore();
   const router = useRouter();
@@ -79,14 +84,11 @@
 
   const loginType = ref<LOGIN_TYPE | -1>(-1);
 
-  if (store.state.loginType !== -1) {
-    router.replace('/libary?refresh=1');
-  }
-
   function updateState(): void {
     if (!userProfiles.value.length) return;
     store.commit('UPDATE_USERINFO', userProfiles.value[index.value]);
     store.commit('UPDATE_LOGINTYPE', loginType.value);
+    store.dispatch('getLikelist');
     router.replace('/library?refresh=1');
   }
 
