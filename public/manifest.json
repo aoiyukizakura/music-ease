@@ -3,13 +3,20 @@
   "name": "musicease!",
   "icons": [
     {
-      "src": "fav-icon.png",
+      "src": "icon-144x144.png",
       "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ],
-  "start_url": "http://127.0.0.1:3000/",
+  "start_url": "/",
+  "scope": "/",
   "background_color": "#f44336",
   "theme_color": "#f44336",
-  "display": "standalone"
+  "display": "standalone",
+  "prefer_related_applications": false
 }

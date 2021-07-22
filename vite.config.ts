@@ -5,7 +5,10 @@ import { svgBuilder } from './src/plugins/svgBuilder';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), svgBuilder('./src/assets/icons/')],
+  plugins: [
+    vue(),
+    svgBuilder('./src/assets/icons/')
+  ],
   server: {
     cors: true,
     hmr: {

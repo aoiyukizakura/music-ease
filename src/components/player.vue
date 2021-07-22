@@ -13,7 +13,7 @@
       alt="封面"
       class="h-16 w-16 object-cover"
     />
-    <img v-else src="../assets/default-music.jpg" alt="封面" class="h-16 w-16 object-cover" />
+    <img v-else src="/default-music.jpg" alt="封面" class="h-16 w-16 object-cover" />
     <div class="flex-1 overflow-hidden mx-2">
       <div
         v-if="player.currentTrack"

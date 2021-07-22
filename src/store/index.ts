@@ -33,6 +33,7 @@ export const store = createStore<State>({
         logout().then(_ => {
           commit("UPDATE_USERINFO", {})
           commit("UPDATE_LOGINTYPE", -1)
+          commit("UPDATE_FAVLIST", [])
           resolve()
         })
       })

@@ -8,15 +8,12 @@
   "dependencies": {
     "axios": "^0.21.1",
     "howler": "^2.2.3",
-    "js-cookie": "^2.2.1",
     "vue": "^3.1.4",
     "vue-router": "^4.0.10",
-    "vue3-slider": "^1.6.4",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@types/howler": "^2.2.2",
-    "@types/js-cookie": "^2.2.6",
     "@types/node": "^15.14.1",
     "@vitejs/plugin-vue": "^1.2.4",
     "@vue/compiler-sfc": "^3.1.4",

@@ -17,13 +17,13 @@
     <figure class="sticky flex flex-col items-center overflow-hidden w-full transform top-16 mt-2" id="playlist-info">
       <img v-img="playlist.coverImgUrl + '?param=200y200'" alt="封面" class="h-48 w-48 object-cover align-bottom" />
       <figcaption class="text-center w-full">
-        <h1 class="text-2xl mt-2 truncate">{{ playlist.name }}</h1>
-        <p class="text-sm font-light mt-1 overflow-elision-2">{{ playlist.description }}</p>
+        <h1 class="text-2xl mt-2 truncate px-2">{{ playlist.name }}</h1>
+        <p class="text-sm font-light mt-1 overflow-elision-2 px-2">{{ playlist.description }}</p>
       </figcaption>
     </figure>
     <div class="w-full z-10 pt-4" id="playlist-content">
-      <div class="btn-divider text-center h-6 sticky z-30 left-0 top-14" :class="{ 'bg-gray-900': stickied }">
-        <button class="btn absolute m-auto left-0 right-0 -bottom-6 z-20 shadow-sm" type="button" @click="playAll">
+      <div class="btn-divider text-center h-6 sticky z-30 left-0 right-0 top-14 flex justify-center" :class="{ 'bg-gray-900': stickied }">
+        <button class="btn absolute -bottom-6 z-20 shadow-sm" type="button" @click="playAll">
           播放
         </button>
       </div>
