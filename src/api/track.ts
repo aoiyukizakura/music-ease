@@ -1,5 +1,5 @@
 import { AxiosPromise } from "axios";
-import { TrackDetail } from "/@/index.d";
+import { LyricResponse, TrackDetail } from "/@/index.d";
 import request from "../utils/request";
 
 /**
@@ -13,6 +13,20 @@ export function getTrackDetail(ids: string | number): AxiosPromise<TrackDetail> 
     method: 'get',
     params: {
       ids,
+    },
+  })
+}
+/**
+ * 获取歌词
+ * 说明 : 调用此接口 , 传入音乐 id 可获得对应音乐的歌词 ( 不需要登录 )
+ * @param {number} id - 音乐 id
+ */
+export function getLyric(id: number): AxiosPromise<LyricResponse> {
+  return request({
+    url: '/lyric',
+    method: 'get',
+    params: {
+      id,
     },
   })
 }

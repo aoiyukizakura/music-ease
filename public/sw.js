@@ -38,7 +38,10 @@ self.addEventListener('fetch', function (event) {
           const url = event.request.url;
           if (!hasSaving(url)) return response;
           return caches.open(CACHE_VERSION).then(cache => {
-            cache.put(event.request, response.clone());
+            cache
+              .put(event.request, response.clone())
+              .then(res => console.log('res :>> ', res))
+              .catch(err => console.log('err :>> ', err));
             return response;
           });
         })

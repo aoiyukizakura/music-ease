@@ -565,3 +565,29 @@ export interface LikeList {
   checkPoint: number;
   code: number;
 }
+// 歌词
+
+export interface Lrc {
+  version: number;
+  lyric: string;
+}
+
+export interface Klyric {
+  version: number;
+  lyric: string;
+}
+
+export interface Tlyric {
+  version: number;
+  lyric: string;
+}
+
+export interface LyricResponse {
+  sgc: boolean;
+  sfy: boolean;
+  qfy: boolean;
+  lrc: Lrc;
+  klyric: Klyric;
+  tlyric: Tlyric;
+  code: number;
+}

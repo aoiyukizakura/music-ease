@@ -75,22 +75,4 @@
     outline: none !important;
     border: none !important;
   }
-
-  .fade-leave-to,
-  .fade-enter-from {
-    opacity: 0;
-  }
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.1s;
-  }
-
-  .slide-down-leave-to,
-  .slide-down-enter-from {
-    transform: translateY(112px);
-  }
-  .slide-down-enter-active,
-  .slide-down-leave-active {
-    transition: transform 0.2s;
-  }
 </style>

@@ -7,6 +7,7 @@ import vImg from './directives/v-img'
 
 import "tailwindcss/tailwind.css"
 import '/@style/global.css'
+import '/@style/transition.css'
 
 const app = createApp(App);
 
