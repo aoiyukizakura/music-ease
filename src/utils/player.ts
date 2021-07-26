@@ -85,7 +85,7 @@ export default class Player {
     })
     this.howl.once("loaderror", (err) => {
       console.log(err);
-      this._playNext();
+      // this._playNext(); 
     })
     this.howl.play()
   }

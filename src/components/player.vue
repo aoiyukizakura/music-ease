@@ -8,12 +8,7 @@
       @drag-end="change($event)"
     ></process-bar>
     <router-link v-if="player.currentTrack" :to="`/playlist/${player.listId}`">
-      <img
-        :src="player.currentTrack.al?.picUrl + '?param=64y64'"
-        alt="封面"
-        class="h-16 w-16 object-cover"
-        @click=""
-      />
+      <img :src="player.currentTrack.al?.picUrl + '?param=64y64'" alt="封面" class="h-16 w-16 object-cover" />
     </router-link>
     <img v-else src="/default-music.jpg" alt="封面" class="h-16 w-16 object-cover" />
     <div class="flex-1 overflow-hidden mx-2">

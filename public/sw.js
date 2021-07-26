@@ -1,7 +1,7 @@
 //缓存空间名称
 const CACHE_VERSION = 'sw_v' + 1;
 //需缓存的文件
-const CACHE_FILES = ['/', '/index.html'];
+// const CACHE_FILES = ['/', '/index.html'];
 // fetch缓存文件
 const FETCH_CACHE_FILES = ['js', 'css', 'jpg'];
 
@@ -13,7 +13,7 @@ const hasSaving = function (url) {
 };
 
 self.addEventListener('install', function (event) {
-  event.waitUntil(caches.open(CACHE_VERSION).then(cache => cache.addAll(CACHE_FILES).then(_ => self.skipWaiting())));
+  // event.waitUntil(caches.open(CACHE_VERSION).then(cache => cache.addAll(CACHE_FILES).then(_ => self.skipWaiting())));
 });
 //监听激活事件
 self.addEventListener('activate', function (event) {

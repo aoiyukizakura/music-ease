@@ -1,4 +1,4 @@
-const defaultImg = `/default-music.jpg`;
+const defaultImg = process.env.NODE_ENV === "development" ? `/default-music.jpg`:`/music-ease/default-music.jpg`;
 
 export default {
   created(el: HTMLElement, binding: any) {
