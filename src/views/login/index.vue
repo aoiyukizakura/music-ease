@@ -29,7 +29,7 @@
           @keypress.enter="onSearch()"
         />
       </fieldset>
-      <ul class="mt-4 space-y-2 overflow-y-auto flex-1 pb-4">
+      <ul class="mt-4 space-y-2 overflow-y-auto flex-1 pb-4 overflow-x-hidden">
         <li
           v-for="(u, i) in userProfiles"
           :key="u.userId"

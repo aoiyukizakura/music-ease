@@ -15,7 +15,7 @@
           :pic-url="p.coverImgUrl"
           :id="p.id"
         />
-        <li ref="trigger" v-if="more">
+        <li v-if="more" class="my-2" ref="trigger">
           <loading />
         </li>
       </ul>
@@ -27,7 +27,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, onActivated, onMounted, onUnmounted, ref } from 'vue';
+  import { computed, onActivated, onDeactivated, onMounted, onUnmounted, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { LOGIN_TYPE } from '/@/index.d';
   import type { Playlist } from '/@/index.d';
@@ -47,7 +47,7 @@
   const more = ref(true);
   const pageStatus = ref(true);
   const playlist = ref<Playlist[]>([]);
-  const offset = ref(0);
+  const offset = ref(1);
   const trigger = ref<HTMLElement | null>(null);
 
   const userinfo = computed(() => store.state.userInfo);
@@ -61,9 +61,13 @@
     observer.disconnect();
   });
   onActivated(() => {
+    trigger.value && observer.observe(trigger.value);
     if (route.query.refresh && userinfo.value.userId) {
       getUserData();
     }
+  });
+  onDeactivated(() => {
+    observer.disconnect();
   });
   async function getUserData(): Promise<void> {
     loading.value = true;

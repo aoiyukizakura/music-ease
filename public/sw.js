@@ -1,9 +1,9 @@
 //缓存空间名称
 const CACHE_VERSION = 'sw_v' + 1;
 //需缓存的文件
-// const CACHE_FILES = ['/', '/index.html'];
+const CACHE_FILES = ['/', '/index.html'];
 // fetch缓存文件
-const FETCH_CACHE_FILES = ['js', 'css', 'jpg'];
+const FETCH_CACHE_FILES = ['js', 'css', 'jpg', 'mp3'];
 
 const hasSaving = function (url) {
   for (var file of FETCH_CACHE_FILES) {
@@ -13,13 +13,14 @@ const hasSaving = function (url) {
 };
 
 self.addEventListener('install', function (event) {
+  self.skipWaiting();
   // event.waitUntil(caches.open(CACHE_VERSION).then(cache => cache.addAll(CACHE_FILES).then(_ => self.skipWaiting())));
 });
 //监听激活事件
 self.addEventListener('activate', function (event) {
   event.waitUntil(
-    caches.keys().then(function (keys) {
-      const promises = keys.map(function (key, i) {
+    caches.keys().then(keys => {
+      const promises = keys.map((key, i) => {
         if (key !== CACHE_VERSION) {
           return caches.delete(keys[i]);
         }
@@ -34,17 +35,16 @@ self.addEventListener('fetch', function (event) {
     caches.match(event.request).then(resp => {
       return (
         resp ||
-        fetch(event.request).then(response => {
-          const url = event.request.url;
-          if (!hasSaving(url)) return response;
-          return caches.open(CACHE_VERSION).then(cache => {
-            cache
-              .put(event.request, response.clone())
-              .then(res => console.log('res :>> ', res))
-              .catch(err => console.log('err :>> ', err));
-            return response;
-          });
-        })
+        fetch(event.request)
+          .then(response => {
+            const url = event.request.url;
+            if (!hasSaving(url)) return response;
+            return caches.open(CACHE_VERSION).then(cache => {
+              cache.put(event.request, response.clone()).catch(err => console.log('err :>> ', err));
+              return response;
+            });
+          })
+          .catch(err => console.log('err :>> ', err))
       );
     })
   );

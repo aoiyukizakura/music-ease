@@ -1,7 +1,7 @@
 {
   "name": "musicease_neteasemusic-pwa-version",
   "version": "0.0.1",
-  "homepage": "https://aoiyukizakura.github.io/music-ease",
+  "homepage": "https://music.soulslike.live",
   "scripts": {
     "dev": "cross-env NODE_ENV=development vite --host",
     "build": "cross-env NODE_ENV=production vue-tsc --noEmit && vite build",

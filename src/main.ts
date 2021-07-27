@@ -16,3 +16,9 @@ app.use(store, key)
   .directive('img', vImg)
   .component('svg-icon', SvgIcon)
   .mount('#app');
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(registration => {
+    
+  });
+}

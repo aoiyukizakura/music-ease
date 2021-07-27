@@ -53,7 +53,7 @@
         <div v-show="lyricVisible" id="lyric" class="h-full w-full absolute bg-gray-500 z-50 p-5 flex flex-col">
           <header class="flex space-x-3 text-white">
             <img
-              :src="player.currentTrack?.al?.picUrl + '?param=64y64'"
+              :src="player.currentTrack ? player.currentTrack.al?.picUrl + '?param=64y64' : '/default-music.jpg'"
               alt="封面"
               class="h-16 w-16 object-cover shadow-lg"
             />
@@ -132,7 +132,11 @@
   const player = computed(() => useStore().state.player);
   const likelist = computed(() => useStore().state.favPlaylist);
   const tdLyrics = computed(() => {
-    if (lyrics.value.length > tLyrics.value.length && lyrics.value[0].rawTime !== tLyrics.value[0].rawTime) {
+    if (
+      tLyrics.value.length &&
+      lyrics.value.length > tLyrics.value.length &&
+      lyrics.value[0].rawTime !== tLyrics.value[0].rawTime
+    ) {
       return Array.from<{ time: number; rawTime: string; content: string }>({
         length: lyrics.value.length - tLyrics.value.length,
       }).concat(tLyrics.value);
