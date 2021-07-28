@@ -1,27 +1,56 @@
-# Vue 3 + Typescript + Vite
+# Musicease - 网易云手机PWA网页
+## 👯‍♂️ 适用人群
+旧手机，~~老年机~~带不动一大堆APP，或是因为官方APP内容太杂只想专注于听音乐。
+>手机食用，效果更佳 [🎶访问DEMO](https://music.soulslike.live)
+## 🎉 感谢
+- [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi) 提供的后端api服务
+- [qier222/YesPlayMusic](https://github.com/qier222/YesPlayMusic) 的前车之鉴以及灵感启发
+- [Spotify](https://www.spotify.com)
+- [网易云音乐](https://music.163.com)
+## ✨ 特性
+- 👑 使用vue3 + vite2.0 + typescript开发
+- 🔑 支持网易云账号登录（邮箱/手机号）
+- 📑 支持滚动歌词
+- 📲 支持PWA
+- 📀 除去所有杂项，只存在听歌功能（真的只有听歌功能）
+- 🎨 页面简(jian)洁(lou)
+## 🖥 本地开发环境
+由于项目不包含后端服务，所以后端的具体部署与配置，请移步[此处](https://github.com/Binaryify/NeteaseCloudMusicApi) 
+```sh
+  # 克隆本仓库
+  git clone https://github.com/aoiyukizakura/music-ease.git
+  # 进入目录
+  cd music-ease
+  # 安装依赖
+  npm install
+  # 运行项目
+  npm run dev
+```
+## 📦 打包部署
+1. 复制环境配置文件
+```ps
+cp .env.example .env.local
+```
+2. 配置环境变量
+```sh
+VITE_BASE_URL = '{your URL}'
+VITE_REAL_IP = '{whatever ipv4 address}'
+```
+3. 打包
+```sh
+npm run build
+```
+4. 将打包好的文件夹上传到你的服务器
+```sh
+scp -P <port> -r dist {username}@{ip}:{dir_location}
+```
 
-This template should help get you started developing with Vue 3 and Typescript in Vite.
+## 📜 开源许可
+本项目仅供个人学习研究使用，禁止用于商业及非法用途。
 
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur). Make sure to enable `vetur.experimental.templateInterpolationService` in settings!
-
-### If Using `<script setup>`
-
-[`<script setup>`](https://github.com/vuejs/rfcs/pull/227) is a feature that is currently in RFC stage. To get proper IDE support for the syntax, use [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar) instead of Vetur (and disable Vetur).
-
-## Type Support For `.vue` Imports in TS
-
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can use the following:
-
-### If Using Volar
-
-Run `Volar: Switch TS Plugin on/off` from VSCode command palette.
-
-### If Using Vetur
-
-1. Install and add `@vuedx/typescript-plugin-vue` to the [plugins section](https://www.typescriptlang.org/tsconfig#plugins) in `tsconfig.json`
-2. Delete `src/shims-vue.d.ts` as it is no longer needed to provide module info to Typescript
-3. Open `src/main.ts` in VSCode
-4. Open the VSCode command palette
-5. Search and run "Select TypeScript version" -> "Use workspace version"
+## 🎞 截图展示
+<br>
+<img src="images/library.png" width="300" >
+<img src="images/playlist.png" width="300" >
+<img src="images/lyric.png" width="300" >
+<br>
