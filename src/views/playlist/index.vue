@@ -22,10 +22,11 @@
       </figcaption>
     </figure>
     <div class="w-full z-10 pt-4" id="playlist-content">
-      <div class="btn-divider text-center h-6 sticky z-30 left-0 right-0 top-14 flex justify-center" :class="{ 'bg-gray-900': stickied }">
-        <button class="btn absolute -bottom-6 z-20 shadow-sm" type="button" @click="playAll">
-          播放
-        </button>
+      <div
+        class="btn-divider text-center h-6 sticky z-30 left-0 right-0 top-14 flex justify-center"
+        :class="{ 'bg-gray-900': stickied }"
+      >
+        <button class="btn absolute -bottom-6 z-20 shadow-sm" type="button" @click="playAll">播放</button>
       </div>
       <div class="pt-10 relative bg-gray-900">
         <span class="absolute -top-20 z-0" :ref="setSentinel" data-flag="PRE"></span>
@@ -93,17 +94,17 @@
         const flag = e.target.getAttribute('data-flag');
         switch (flag) {
           case 'SUF':
-            if (e.intersectionRatio) {
+            if (e.isIntersecting) {
               if (bufferList.value.length) {
                 // 缓冲区中的数据还未读取完成
                 tracks.value = tracks.value.concat(bufferList.value.splice(0, 20));
               } else {
-                getMore();
+                !loading.value && getMore();
               }
             }
             break;
           case 'PRE':
-            stickied.value = !e.intersectionRatio;
+            stickied.value = !e.isIntersecting;
             break;
           default:
             break;
@@ -112,6 +113,7 @@
     },
     {
       root: scrollBox.value,
+      threshold: [0, 1],
     }
   );
 
@@ -122,6 +124,7 @@
   const playlistIds = ref<TrackId[]>([]);
   const playlist = ref<Playlist>({} as Playlist);
   const bufferList = ref<Track[]>([]);
+  const loading = ref(false);
 
   const player = computed(() => store.state.player);
   const isPlayingThisList = computed(() => playlist.value.id === player.value.listId);
@@ -155,6 +158,7 @@
   }
 
   async function getMore(): Promise<void> {
+    loading.value = true;
     const req_ids: string = playlistIds.value
       .slice(offset.value, offset.value + PAGE_SIZE)
       .map((t: any) => t.id)
@@ -169,6 +173,8 @@
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      loading.value = false;
     }
   }
 

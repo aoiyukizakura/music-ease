@@ -50,7 +50,7 @@
     </div>
     <teleport to="body">
       <transition name="slide-down" mode="out-in">
-        <div v-show="lyricVisible" id="lyric" class="h-full w-full absolute bg-gray-500 z-50 p-5 flex flex-col">
+        <div v-show="lyricVisible" id="lyric" class="h-full w-full absolute bg-gray-600 z-50 p-5 flex flex-col">
           <header class="flex space-x-3 text-white">
             <img
               :src="player.currentTrack ? player.currentTrack.al?.picUrl + '?param=64y64' : '/default-music.jpg'"
@@ -69,11 +69,11 @@
               </span>
             </div>
             <span>
-              <i @click="lyricVisible = false">[x]</i>
+              <span @click="lyricVisible = false">[x]</span>
             </span>
           </header>
           <div class="lyric-content flex-1 overflow-hidden mt-2">
-            <ul class="font-semibold h-full w-full overflow-y-scroll py-3 text-lg space-y-2">
+            <ul class="font-bold h-full w-full overflow-y-scroll py-3 text-xl space-y-2">
               <li
                 v-for="(l, index) in lyrics"
                 :key="index"
@@ -120,6 +120,8 @@
     }
   });
 
+  const store = useStore();
+
   const startX = ref(0);
   const distanceX = ref(0);
   const scrollContent = ref<HTMLElement | null>(null);
@@ -129,8 +131,8 @@
   const lyricIndex = ref(-1);
   const lyricIntervalTimer = ref<NodeJS.Timeout | null>(null);
 
-  const player = computed(() => useStore().state.player);
-  const likelist = computed(() => useStore().state.favPlaylist);
+  const player = computed(() => store.state.player);
+  const likelist = computed(() => store.state.favPlaylist);
   const tdLyrics = computed(() => {
     if (
       tLyrics.value.length &&
@@ -238,11 +240,11 @@
     position: relative;
     &::before {
       content: '';
-      @apply absolute w-full h-4 top-0 bg-gradient-to-b from-gray-500 to-transparent;
+      @apply absolute w-full h-4 top-0 bg-gradient-to-b from-gray-600 to-transparent;
     }
     &::after {
       content: '';
-      @apply absolute w-full h-4 bottom-0 bg-gradient-to-t from-gray-500 to-transparent;
+      @apply absolute w-full h-4 bottom-0 bg-gradient-to-t from-gray-600 to-transparent;
     }
   }
 </style>

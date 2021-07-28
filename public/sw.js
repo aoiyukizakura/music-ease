@@ -3,7 +3,7 @@ const CACHE_VERSION = 'sw_v' + 1;
 //需缓存的文件
 const CACHE_FILES = ['/', '/index.html'];
 // fetch缓存文件
-const FETCH_CACHE_FILES = ['js', 'css', 'jpg', 'mp3'];
+const FETCH_CACHE_FILES = ['js', 'css', 'jpg'];
 
 const hasSaving = function (url) {
   for (var file of FETCH_CACHE_FILES) {
@@ -14,7 +14,6 @@ const hasSaving = function (url) {
 
 self.addEventListener('install', function (event) {
   self.skipWaiting();
-  // event.waitUntil(caches.open(CACHE_VERSION).then(cache => cache.addAll(CACHE_FILES).then(_ => self.skipWaiting())));
 });
 //监听激活事件
 self.addEventListener('activate', function (event) {
@@ -31,6 +30,7 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
+  if (event.request.url.endsWith('mp3')) return;
   event.respondWith(
     caches.match(event.request).then(resp => {
       return (

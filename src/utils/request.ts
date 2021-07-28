@@ -1,9 +1,7 @@
 import axios from 'axios';
-import { production_url, real_ip } from './config.spec';
 
 const baseURL =
-  process.env.NODE_ENV === "development"
-    ? '/api' : production_url;
+  process.env.NODE_ENV === "development" ? '/api' : import.meta.env.VITE_BASE_URL;
 
 const service = axios.create({
   baseURL,
@@ -13,7 +11,7 @@ const service = axios.create({
 
 service.interceptors.request.use(config => {
   if (!config.params) config.params = {};
-  process.env.NODE_ENV === "production" && (config.params.realIP = real_ip)
+  process.env.NODE_ENV === "production" && (config.params.realIP = import.meta.env.VITE_REAL_IP)
   return config
 })
 

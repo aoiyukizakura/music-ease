@@ -69,6 +69,13 @@
     height: 100%;
     width: 100%;
   }
+  #lyric {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: 100%;
+    width: 100%;
+  }
   button,
   button:focus,
   button:active {

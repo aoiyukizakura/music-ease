@@ -5,7 +5,7 @@
         v-model="account"
         class="w-full mt-4 px-4 py-2 rounded text-base font-medium text-black"
         type="text"
-        placeholder="输入邮箱、手机号"
+        placeholder="输入邮箱或者手机号"
       />
       <input
         v-model="pwd"
@@ -13,7 +13,7 @@
         type="password"
         placeholder="密码"
       />
-      <button class="btn-primary mt-3" type="button" @click="doLogin">账号登录</button>
+      <button class="btn-primary mt-8" type="button" @click="doLogin">登录</button>
     </div>
     <div v-if="login_type === LOGIN_TYPE.USERNAME" class="h-full flex flex-col">
       <h2>昵称登录</h2>
@@ -55,7 +55,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, onBeforeMount, reactive, ref } from 'vue';
+  import { onBeforeMount, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { search } from '/@/api/others';
   import { LOGIN_TYPE } from '/@/index.d';
@@ -89,7 +89,7 @@
     store.commit('UPDATE_USERINFO', userProfiles.value[index.value]);
     store.commit('UPDATE_LOGINTYPE', loginType.value);
     store.dispatch('getLikelist');
-    router.replace('/library?refresh=1');
+    router.replace('/library');
   }
 
   async function doLogin() {

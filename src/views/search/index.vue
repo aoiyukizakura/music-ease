@@ -38,8 +38,9 @@
   import PlaylistItem from '/@cp/playlist-item.vue';
 
   const PAGE_SIZE = 20;
+  const store = useStore();
 
-  const player = computed(() => useStore().state.player);
+  const player = computed(() => store.state.player);
 
   const keyword = ref('');
   const offset = ref(0);
@@ -72,6 +73,5 @@
       loading.value = false;
     }
   }
-
 </script>
 <style lang="postcss"></style>
