@@ -1,31 +1,49 @@
-import type { Router, RouteRecordRaw } from "vue-router";
-import { createRouter, createWebHashHistory, } from "vue-router";
 
-const routes: Array<RouteRecordRaw> = [
+import { createWebHistory, createRouter, createWebHashHistory, } from "vue-router";
+import type { Router, RouteRecordRaw } from "vue-router";
+
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'Home',
-    component: () => import("/@views/home/index.vue")
+    name: 'home',
+    component: () => import("/@views/home/index.vue"),
+    meta: {
+    }
   },
   {
-    path: '/login',
+    path: '/library',
+    name: 'library',
+    component: () => import('/@views/library/index.vue'),
+    meta: {}
+  },
+  {
+    path: '/search',
+    name: 'search',
+    component: () => import('/@views/search/index.vue'),
+    meta: {
+    }
+  },
+  {
+    path: '/login/:type',
     name: 'login',
-    component: () => import('/@views/login/index.vue')
-  }
+    component: () => import('/@views/login/index.vue'),
+    meta: {
+    }
+  },
+  {
+    path: '/playlist/:id',
+    name: 'playlist',
+    component: () => import('/@views/playlist/index.vue'),
+    meta: {}
+  },
 ]
 
 const router: Router = createRouter({
   history: createWebHashHistory(),
-  routes
-})
-
-router.beforeEach((to, from, next) => {
-  next()
-  // if (!localStorage.getItem("userInfo") && to.path !== '/login') {
-  //   next('/login')
-  // } else {
-  //   next()
-  // }
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return savedPosition
+  }
 })
 
 export default router
