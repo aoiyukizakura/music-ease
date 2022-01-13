@@ -1,0 +1,22 @@
+{
+  "short_name": "musicease!",
+  "name": "musicease!",
+  "icons": [
+    {
+      "src": "icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/music-ease/",
+  "scope": "/music-ease/",
+  "background_color": "#f44336",
+  "theme_color": "#f44336",
+  "display": "standalone",
+  "prefer_related_applications": false
+}
