@@ -1,7 +1,7 @@
 //缓存空间名称
 const CACHE_VERSION = 'sw_v' + 1;
 //需缓存的文件
-const CACHE_FILES = ['/', '/index.html'];
+const CACHE_FILES = ['/music-ease/', '/music-ease/index.html'];
 // fetch缓存文件
 const FETCH_CACHE_FILES = ['js', 'css', 'jpg'];
 

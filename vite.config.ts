@@ -31,7 +31,7 @@ export default defineConfig({
       '/@cp': resolve(__dirname, 'src/components'),
     },
   },
-  base: '/',
+  base: process.env.NODE_ENV === "development" ? '/' : '/music-ease/',
   css: {
     postcss: "./postcss.config.js"
   }

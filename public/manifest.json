@@ -13,8 +13,8 @@
       "type": "image/png"
     }
   ],
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/music-ease/",
+  "scope": "/music-ease/",
   "background_color": "#f44336",
   "theme_color": "#f44336",
   "display": "standalone",
