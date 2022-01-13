@@ -129,7 +129,7 @@
   const tLyrics = ref<{ time: number; rawTime: string; content: string }[]>([]);
   const lyricVisible = ref(false);
   const lyricIndex = ref(-1);
-  const lyricIntervalTimer = ref<NodeJS.Timeout | null>(null);
+  const lyricIntervalTimer = ref<any | null>(null);
 
   const player = computed(() => store.state.player);
   const likelist = computed(() => store.state.favPlaylist);
