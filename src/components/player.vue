@@ -10,7 +10,7 @@
     <router-link v-if="player.currentTrack" :to="`/playlist/${player.listId}`">
       <img :src="player.currentTrack.al?.picUrl + '?param=64y64'" alt="封面" class="h-16 w-16 object-cover" />
     </router-link>
-    <img v-else src="/default-music.jpg" alt="封面" class="h-16 w-16 object-cover" />
+    <img v-else :src="defaultImg" alt="封面" class="h-16 w-16 object-cover" />
     <div class="flex-1 overflow-hidden mx-2">
       <div
         v-if="player.currentTrack"
@@ -53,7 +53,7 @@
         <div v-show="lyricVisible" id="lyric" class="h-full w-full absolute bg-gray-600 z-50 p-5 flex flex-col">
           <header class="flex space-x-3 text-white">
             <img
-              :src="player.currentTrack ? player.currentTrack.al?.picUrl + '?param=64y64' : '/default-music.jpg'"
+              :src="player.currentTrack ? player.currentTrack.al?.picUrl + '?param=64y64' : defaultImg"
               alt="封面"
               class="h-16 w-16 object-cover shadow-lg"
             />
@@ -111,6 +111,7 @@
   import { getLyric } from '../api/track';
   import { useStore } from '/@/store';
   import ProcessBar from '/@cp/progress-bar.vue';
+  import { defaultImg } from '/@/directives/v-img'
 
   onMounted(() => {});
 
